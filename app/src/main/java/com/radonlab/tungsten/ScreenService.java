@@ -3,12 +3,16 @@ package com.radonlab.tungsten;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.Button;
 
 public class ScreenService extends Service {
+    private static final int LAYOUT_TYPE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+            WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
 
     private WindowManager windowManager;
 
@@ -26,9 +30,9 @@ public class ScreenService extends Service {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                LAYOUT_TYPE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.OPAQUE
+                PixelFormat.TRANSLUCENT
         );
         layoutParams.gravity = Gravity.CENTER;
         windowManager.addView(floatButton, layoutParams);
