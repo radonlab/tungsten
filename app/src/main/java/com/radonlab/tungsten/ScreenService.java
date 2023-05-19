@@ -6,17 +6,18 @@ import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 
 public class ScreenService extends Service {
     private static final int LAYOUT_TYPE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
             WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
 
-    private WindowManager windowManager;
+    private View touchButton;
 
-    private Button floatButton;
+    private WindowManager windowManager;
 
     public ScreenService() {
     }
@@ -24,9 +25,9 @@ public class ScreenService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        LayoutInflater inflater = LayoutInflater.from(this);
+        touchButton = inflater.inflate(R.layout.touch_button, null);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        floatButton = new Button(this);
-        floatButton.setText("Click Me!");
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -35,13 +36,13 @@ public class ScreenService extends Service {
                 PixelFormat.TRANSLUCENT
         );
         layoutParams.gravity = Gravity.CENTER;
-        windowManager.addView(floatButton, layoutParams);
+        windowManager.addView(touchButton, layoutParams);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        windowManager.removeView(floatButton);
+        windowManager.removeView(touchButton);
     }
 
     @Override
