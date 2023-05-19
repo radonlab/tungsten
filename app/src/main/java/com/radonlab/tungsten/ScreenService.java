@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
 public class ScreenService extends Service {
     private static final int LAYOUT_TYPE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
@@ -35,8 +37,11 @@ public class ScreenService extends Service {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
         );
-        layoutParams.gravity = Gravity.CENTER;
+        layoutParams.gravity = Gravity.END | Gravity.BOTTOM;
+        layoutParams.alpha = 0.5f;
+        layoutParams.y = 300;
         windowManager.addView(touchButton, layoutParams);
+        initEventListener();
     }
 
     @Override
@@ -49,5 +54,12 @@ public class ScreenService extends Service {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private void initEventListener() {
+        Button touchBall = touchButton.findViewById(R.id.touchBall);
+        touchBall.setOnClickListener((view) -> {
+            Log.d("event", "trigger");
+        });
     }
 }

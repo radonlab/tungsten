@@ -8,6 +8,6 @@
         android:layout_height="48dp"
         android:background="@drawable/ic_touch_ball"
         android:contentDescription="@string/touch_ball"
-        android:id="@+id/touch_ball" />
+        android:id="@+id/touchBall" />
 
 </RelativeLayout>
