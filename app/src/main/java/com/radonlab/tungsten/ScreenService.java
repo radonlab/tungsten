@@ -10,7 +10,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 
 import com.radonlab.tungsten.scripting.Script;
 import com.radonlab.tungsten.scripting.ScriptRunner;
@@ -22,18 +21,19 @@ public class ScreenService extends Service {
 
     private ScriptRunner scriptRunner;
 
-    private View touchButton;
+    private View touchBall;
 
     private WindowManager windowManager;
 
-    public ScreenService() {}
+    public ScreenService() {
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         scriptRunner = new ScriptRunner();
         LayoutInflater inflater = LayoutInflater.from(this);
-        touchButton = inflater.inflate(R.layout.touch_button, null);
+        touchBall = inflater.inflate(R.layout.touch_ball, null);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -45,14 +45,14 @@ public class ScreenService extends Service {
         layoutParams.gravity = Gravity.END | Gravity.BOTTOM;
         layoutParams.alpha = 0.5f;
         layoutParams.y = 300;
-        windowManager.addView(touchButton, layoutParams);
+        windowManager.addView(touchBall, layoutParams);
         initEventListener();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        windowManager.removeView(touchButton);
+        windowManager.removeView(touchBall);
     }
 
     @Override
@@ -62,11 +62,12 @@ public class ScreenService extends Service {
     }
 
     private void initEventListener() {
-        Button touchBall = touchButton.findViewById(R.id.touchBall);
-        touchBall.setOnClickListener((view) -> {
-            Log.d("event", "trigger");
-            Script script = new Script("foo.js", "1 + 1");
-            scriptRunner.execute(script);
-        });
+        touchBall.findViewById(R.id.touch_btn).setOnClickListener(this::onTriggered);
+    }
+
+    private void onTriggered(View view) {
+        Log.d("ScreenService", "triggered");
+        Script script = new Script("foo.js", "gunn()");
+        scriptRunner.execute(script);
     }
 }
