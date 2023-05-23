@@ -4,13 +4,15 @@ import com.whl.quickjs.android.QuickJSLoader;
 import com.whl.quickjs.wrapper.QuickJSContext;
 
 public class ScriptRunner {
-    public static void init() {
+
+    static {
         QuickJSLoader.init();
     }
 
-    public static void run(Script script) {
+    public void execute(Script script) {
         QuickJSContext context = QuickJSContext.create();
-        context.evaluate(script.getContent(), script.getFilename());
+        byte[] code = context.compile(script.getContent(), script.getFilename());
+        context.execute(code);
         context.destroy();
     }
 }

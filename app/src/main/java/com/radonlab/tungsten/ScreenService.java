@@ -12,21 +12,26 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.radonlab.tungsten.scripting.Script;
+import com.radonlab.tungsten.scripting.ScriptRunner;
+
 public class ScreenService extends Service {
     private static final int LAYOUT_TYPE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
             WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
 
+    private ScriptRunner scriptRunner;
+
     private View touchButton;
 
     private WindowManager windowManager;
 
-    public ScreenService() {
-    }
+    public ScreenService() {}
 
     @Override
     public void onCreate() {
         super.onCreate();
+        scriptRunner = new ScriptRunner();
         LayoutInflater inflater = LayoutInflater.from(this);
         touchButton = inflater.inflate(R.layout.touch_button, null);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
@@ -60,6 +65,8 @@ public class ScreenService extends Service {
         Button touchBall = touchButton.findViewById(R.id.touchBall);
         touchBall.setOnClickListener((view) -> {
             Log.d("event", "trigger");
+            Script script = new Script("foo.js", "1 + 1");
+            scriptRunner.execute(script);
         });
     }
 }
