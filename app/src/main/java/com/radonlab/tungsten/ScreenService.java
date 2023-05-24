@@ -10,9 +10,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.radonlab.tungsten.scripting.Script;
 import com.radonlab.tungsten.scripting.ScriptRunner;
+import com.whl.quickjs.wrapper.QuickJSException;
 
 public class ScreenService extends Service {
     private static final int LAYOUT_TYPE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
@@ -66,8 +68,12 @@ public class ScreenService extends Service {
     }
 
     private void onTriggered(View view) {
-        Log.d("ScreenService", "triggered");
-        Script script = new Script("foo.js", "gunn()");
-        scriptRunner.execute(script);
+        try {
+            Log.d("ScreenService", "triggered");
+            Script script = new Script("foo.js", "gunn()");
+            scriptRunner.execute(script);
+        } catch (QuickJSException e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }
