@@ -42,7 +42,7 @@ public class ScreenService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        scriptRunner = new ScriptRunner();
+        scriptRunner = new ScriptRunner(getApplicationContext());
         dndState = new DndState();
         LayoutInflater inflater = LayoutInflater.from(this);
         touchBall = inflater.inflate(R.layout.touch_ball, null);
@@ -90,7 +90,7 @@ public class ScreenService extends Service {
     private void onTrigger(View view) {
         try {
             Log.d("ScreenService", "triggered");
-            Script script = new Script("foo.js", "gunn()");
+            Script script = new Script("foo.js", "app.toast('hello');");
             scriptRunner.execute(script);
         } catch (QuickJSException e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
