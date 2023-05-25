@@ -1,19 +1,23 @@
 package com.radonlab.tungsten;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.radonlab.tungsten.scripting.Script;
 import com.radonlab.tungsten.scripting.ScriptRunner;
+import com.radonlab.tungsten.ui.DndState;
 import com.whl.quickjs.wrapper.QuickJSException;
 
 public class ScreenService extends Service {
@@ -23,30 +27,36 @@ public class ScreenService extends Service {
 
     private ScriptRunner scriptRunner;
 
+    private DndState dndState;
+
     private View touchBall;
 
     private WindowManager windowManager;
 
+    private WindowManager.LayoutParams layoutParams;
+
     public ScreenService() {
     }
 
+    @SuppressLint("RtlHardcoded")
     @Override
     public void onCreate() {
         super.onCreate();
         scriptRunner = new ScriptRunner();
+        dndState = new DndState();
         LayoutInflater inflater = LayoutInflater.from(this);
         touchBall = inflater.inflate(R.layout.touch_ball, null);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
+        layoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 LAYOUT_TYPE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
         );
-        layoutParams.gravity = Gravity.END | Gravity.BOTTOM;
+        layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
         layoutParams.alpha = 0.5f;
-        layoutParams.y = 300;
+        setInitPosition();
         windowManager.addView(touchBall, layoutParams);
         initEventListener();
     }
@@ -63,11 +73,21 @@ public class ScreenService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    private void initEventListener() {
-        touchBall.findViewById(R.id.touch_btn).setOnClickListener(this::onTriggered);
+    private void setInitPosition() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        int offset = (int) (metrics.density * 48);
+        layoutParams.x = metrics.widthPixels - offset;
+        layoutParams.y = metrics.heightPixels - offset - 400;
     }
 
-    private void onTriggered(View view) {
+    private void initEventListener() {
+        View btn = touchBall.findViewById(R.id.touch_btn);
+        btn.setOnClickListener(this::onTrigger);
+        btn.setOnTouchListener(this::onTouch);
+    }
+
+    private void onTrigger(View view) {
         try {
             Log.d("ScreenService", "triggered");
             Script script = new Script("foo.js", "gunn()");
@@ -75,5 +95,22 @@ public class ScreenService extends Service {
         } catch (QuickJSException e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private boolean onTouch(View view, MotionEvent e) {
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                dndState.startDrag(e.getRawX(), e.getRawY(), layoutParams.x, layoutParams.y);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                layoutParams.x = (int) dndState.getCurrentX(e.getRawX());
+                layoutParams.y = (int) dndState.getCurrentY(e.getRawY());
+                windowManager.updateViewLayout(touchBall, layoutParams);
+                break;
+            case MotionEvent.ACTION_UP:
+                dndState.endDrag();
+                break;
+        }
+        return true;
     }
 }
