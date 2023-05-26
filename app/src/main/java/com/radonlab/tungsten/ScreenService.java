@@ -76,9 +76,12 @@ public class ScreenService extends Service {
     private void setInitPosition() {
         DisplayMetrics metrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(metrics);
-        int offset = (int) (metrics.density * 48);
-        layoutParams.x = metrics.widthPixels - offset;
-        layoutParams.y = metrics.heightPixels - offset - 400;
+        float width = getResources().getDimension(R.dimen.touch_ball_width);
+        float height = getResources().getDimension(R.dimen.touch_ball_height);
+        int offsetX = (int) (metrics.density * width);
+        int offsetY = (int) (metrics.density * height - 400);
+        layoutParams.x = metrics.widthPixels - offsetX;
+        layoutParams.y = metrics.heightPixels - offsetY;
     }
 
     private void initEventListener() {
@@ -111,6 +114,6 @@ public class ScreenService extends Service {
                 dndState.endDrag();
                 break;
         }
-        return true;
+        return false;
     }
 }
