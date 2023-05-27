@@ -76,12 +76,10 @@ public class ScreenService extends Service {
     private void setInitPosition() {
         DisplayMetrics metrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(metrics);
-        float width = getResources().getDimension(R.dimen.touch_ball_width);
-        float height = getResources().getDimension(R.dimen.touch_ball_height);
-        int offsetX = (int) (metrics.density * width);
-        int offsetY = (int) (metrics.density * height - 400);
-        layoutParams.x = metrics.widthPixels - offsetX;
-        layoutParams.y = metrics.heightPixels - offsetY;
+        int width = getResources().getDimensionPixelSize(R.dimen.touch_ball_width);
+        int height = getResources().getDimensionPixelSize(R.dimen.touch_ball_height);
+        layoutParams.x = metrics.widthPixels - width;
+        layoutParams.y = (int) (metrics.heightPixels * 0.8f) - height;
     }
 
     private void initEventListener() {
