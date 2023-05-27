@@ -19,11 +19,11 @@ public class ScriptRunner {
     }
 
     public void execute(Script script) throws QuickJSException {
+        QuickJSContext qjs = QuickJSContext.create();
         Environment environment = new Environment(context);
-        QuickJSContext context = QuickJSContext.create();
-        byte[] code = context.compile(script.getContent(), script.getFilename());
-        environment.setup(context.getGlobalObject(), context);
-        context.execute(code);
-        context.destroy();
+        environment.setup(qjs);
+        byte[] code = qjs.compile(script.getContent(), script.getFilename());
+        qjs.execute(code);
+        qjs.destroy();
     }
 }

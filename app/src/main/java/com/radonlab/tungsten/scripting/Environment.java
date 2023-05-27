@@ -3,7 +3,6 @@ package com.radonlab.tungsten.scripting;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.whl.quickjs.wrapper.JSCallFunction;
 import com.whl.quickjs.wrapper.JSObject;
 import com.whl.quickjs.wrapper.QuickJSContext;
 
@@ -15,13 +14,21 @@ public class Environment {
         this.context = context;
     }
 
-    public void setup(JSObject global, QuickJSContext qjs) {
+    public void setup(QuickJSContext qjs) {
+        JSObject global = qjs.getGlobalObject();
         JSObject app = qjs.createNewJSObject();
-        app.setProperty("toast", (JSCallFunction) (Object... args) -> {
-            String msg = (String) args[0];
-            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-            return null;
-        });
+        app.setProperty("toast", this::toast);
+        app.setProperty("click", this::click);
         global.setProperty("app", app);
+    }
+
+    private Object toast(Object... args) {
+        String msg = (String) args[0];
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+        return null;
+    }
+
+    private Object click(Object... args) {
+        return null;
     }
 }

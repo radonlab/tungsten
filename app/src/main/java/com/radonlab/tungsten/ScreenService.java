@@ -38,14 +38,14 @@ public class ScreenService extends Service {
     public ScreenService() {
     }
 
-    @SuppressLint("RtlHardcoded")
+    @SuppressLint({"RtlHardcoded", "InflateParams"})
     @Override
     public void onCreate() {
         super.onCreate();
         scriptRunner = new ScriptRunner(getApplicationContext());
         dndState = new DndState();
         LayoutInflater inflater = LayoutInflater.from(this);
-        touchBall = inflater.inflate(R.layout.touch_ball, null);
+        touchBall = inflater.inflate(R.layout.touch_ball, null, false);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         layoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
