@@ -43,7 +43,7 @@ public class ScreenService extends AccessibilityService {
     @Override
     public void onCreate() {
         super.onCreate();
-        scriptRunner = new ScriptRunner(getApplicationContext());
+        scriptRunner = new ScriptRunner(getApplicationContext(), this);
         dndState = new DndState();
         LayoutInflater inflater = LayoutInflater.from(this);
         touchBall = inflater.inflate(R.layout.touch_ball, null, false);

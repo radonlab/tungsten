@@ -1,5 +1,6 @@
 package com.radonlab.tungsten.scripting;
 
+import android.accessibilityservice.AccessibilityService;
 import android.content.Context;
 
 import com.whl.quickjs.android.QuickJSLoader;
@@ -12,8 +13,8 @@ public class ScriptRunner extends Environment {
         QuickJSLoader.init();
     }
 
-    public ScriptRunner(Context context) {
-        super(context);
+    public ScriptRunner(Context context, AccessibilityService service) {
+        super(context, service);
     }
 
     public void execute(Script script) throws QuickJSException {
