@@ -6,22 +6,19 @@ import com.whl.quickjs.android.QuickJSLoader;
 import com.whl.quickjs.wrapper.QuickJSContext;
 import com.whl.quickjs.wrapper.QuickJSException;
 
-public class ScriptRunner {
+public class ScriptRunner extends Environment {
 
     static {
         QuickJSLoader.init();
     }
 
-    private final Context context;
-
     public ScriptRunner(Context context) {
-        this.context = context;
+        super(context);
     }
 
     public void execute(Script script) throws QuickJSException {
         QuickJSContext qjs = QuickJSContext.create();
-        Environment environment = new Environment(context);
-        environment.setup(qjs);
+        setup(qjs);
         byte[] code = qjs.compile(script.getContent(), script.getFilename());
         qjs.execute(code);
         qjs.destroy();

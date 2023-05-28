@@ -1,5 +1,6 @@
 package com.radonlab.tungsten;
 
+import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
@@ -13,14 +14,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
+import android.view.accessibility.AccessibilityEvent;
 
 import com.radonlab.tungsten.scripting.Script;
 import com.radonlab.tungsten.scripting.ScriptRunner;
 import com.radonlab.tungsten.ui.DndState;
 import com.whl.quickjs.wrapper.QuickJSException;
 
-public class ScreenService extends Service {
+public class ScreenService extends AccessibilityService {
     private static final int LAYOUT_TYPE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
             WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
@@ -68,9 +69,11 @@ public class ScreenService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+    public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
+    }
+
+    @Override
+    public void onInterrupt() {
     }
 
     private void setInitPosition() {
@@ -94,7 +97,7 @@ public class ScreenService extends Service {
             Script script = new Script("foo.js", "app.toast('hello');");
             scriptRunner.execute(script);
         } catch (QuickJSException e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.w("ScreenService", e);
         }
     }
 

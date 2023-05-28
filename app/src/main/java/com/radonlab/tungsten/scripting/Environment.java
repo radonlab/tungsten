@@ -29,6 +29,8 @@ public class Environment {
     }
 
     private Object click(Object... args) {
+        Float x = (Float) args[0];
+        Float y = (Float) args[1];
         return null;
     }
 }
