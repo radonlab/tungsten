@@ -36,6 +36,8 @@ public class ScreenService extends AccessibilityService {
 
     private Size screenSize;
 
+    private Size touchBallSize;
+
     public ScreenService() {
     }
 
@@ -58,11 +60,10 @@ public class ScreenService extends AccessibilityService {
         );
         layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
         layoutParams.alpha = 0.5f;
-        // Init display info
-        DisplayMetrics metrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getMetrics(metrics);
-        screenSize = new Size(metrics.widthPixels, metrics.heightPixels);
-        setInitPosition();
+        // Init position
+        initDimensionInfo();
+        layoutParams.x = screenSize.getWidth() - touchBallSize.getWidth();
+        layoutParams.y = (int) (screenSize.getHeight() * 0.8f) - touchBallSize.getHeight();
         windowManager.addView(touchBall, layoutParams);
         initEventListener();
     }
@@ -81,17 +82,18 @@ public class ScreenService extends AccessibilityService {
     public void onInterrupt() {
     }
 
-    private void setInitPosition() {
-        int width = getResources().getDimensionPixelSize(R.dimen.touch_ball_width);
-        int height = getResources().getDimensionPixelSize(R.dimen.touch_ball_height);
-        layoutParams.x = screenSize.getWidth() - width;
-        layoutParams.y = (int) (screenSize.getHeight() * 0.8f) - height;
+    private void initDimensionInfo() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        screenSize = new Size(metrics.widthPixels, metrics.heightPixels);
+        int touchBallWidth = getResources().getDimensionPixelSize(R.dimen.touch_ball_width);
+        int touchBallHeight = getResources().getDimensionPixelSize(R.dimen.touch_ball_height);
+        touchBallSize = new Size(touchBallWidth, touchBallHeight);
     }
 
     private void initEventListener() {
-        View btn = touchBall.findViewById(R.id.touch_btn);
-        btn.setOnClickListener(this::onTrigger);
-        btn.setOnTouchListener(this::onTouch);
+        touchBall.setOnClickListener(this::onTrigger);
+        touchBall.setOnTouchListener(this::onTouch);
     }
 
     private void onTrigger(View view) {

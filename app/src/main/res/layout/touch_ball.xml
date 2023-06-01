@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-
-    <Button
-        android:id="@+id/touch_btn"
-        android:contentDescription="@string/touch_ball"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/ic_touch_ball"
-        android:outlineProvider="none"
-        android:stateListAnimator="@null" />
-
-</RelativeLayout>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:contentDescription="@string/touch_ball"
+    android:layout_width="@dimen/touch_ball_width"
+    android:layout_height="@dimen/touch_ball_height"
+    android:background="@drawable/ic_touch_ball"
+    android:outlineProvider="none"
+    android:stateListAnimator="@null" />
