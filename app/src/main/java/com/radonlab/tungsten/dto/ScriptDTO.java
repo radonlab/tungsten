@@ -6,6 +6,8 @@ public class ScriptDTO {
 
     private String content;
 
+    private Long timestamp;
+
     public ScriptDTO(String name, String content) {
         this.name = name;
         this.content = content;
@@ -25,5 +27,9 @@ public class ScriptDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
     }
 }
