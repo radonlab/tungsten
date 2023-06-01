@@ -2,13 +2,11 @@ package com.radonlab.tungsten;
 
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
-import android.app.Service;
-import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
-import android.os.IBinder;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Size;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,6 +34,8 @@ public class ScreenService extends AccessibilityService {
 
     private WindowManager.LayoutParams layoutParams;
 
+    private Size screenSize;
+
     public ScreenService() {
     }
 
@@ -45,6 +45,7 @@ public class ScreenService extends AccessibilityService {
         super.onCreate();
         scriptRunner = new ScriptRunner(getApplicationContext(), this);
         dndState = new DndState();
+        // Init layout
         LayoutInflater inflater = LayoutInflater.from(this);
         touchBall = inflater.inflate(R.layout.touch_ball, null, false);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
@@ -57,6 +58,10 @@ public class ScreenService extends AccessibilityService {
         );
         layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
         layoutParams.alpha = 0.5f;
+        // Init display info
+        DisplayMetrics metrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        screenSize = new Size(metrics.widthPixels, metrics.heightPixels);
         setInitPosition();
         windowManager.addView(touchBall, layoutParams);
         initEventListener();
@@ -77,12 +82,10 @@ public class ScreenService extends AccessibilityService {
     }
 
     private void setInitPosition() {
-        DisplayMetrics metrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getMetrics(metrics);
         int width = getResources().getDimensionPixelSize(R.dimen.touch_ball_width);
         int height = getResources().getDimensionPixelSize(R.dimen.touch_ball_height);
-        layoutParams.x = metrics.widthPixels - width;
-        layoutParams.y = (int) (metrics.heightPixels * 0.8f) - height;
+        layoutParams.x = screenSize.getWidth() - width;
+        layoutParams.y = (int) (screenSize.getHeight() * 0.8f) - height;
     }
 
     private void initEventListener() {
