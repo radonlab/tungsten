@@ -47,13 +47,15 @@ public class ScreenService extends AccessibilityService {
         super.onCreate();
         scriptRunner = new ScriptRunner(getApplicationContext(), this);
         dndState = new DndState();
-        // Init layout
         LayoutInflater inflater = LayoutInflater.from(this);
         touchBall = inflater.inflate(R.layout.touch_ball, null, false);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        // Init dimensions
+        initDimensions();
+        // Init layout
         layoutParams = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
+                touchBallSize.getWidth(),
+                touchBallSize.getHeight(),
                 LAYOUT_TYPE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
@@ -61,7 +63,6 @@ public class ScreenService extends AccessibilityService {
         layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
         layoutParams.alpha = 0.5f;
         // Init position
-        initDimensionInfo();
         layoutParams.x = screenSize.getWidth() - touchBallSize.getWidth();
         layoutParams.y = (int) (screenSize.getHeight() * 0.8f) - touchBallSize.getHeight();
         windowManager.addView(touchBall, layoutParams);
@@ -82,7 +83,7 @@ public class ScreenService extends AccessibilityService {
     public void onInterrupt() {
     }
 
-    private void initDimensionInfo() {
+    private void initDimensions() {
         DisplayMetrics metrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(metrics);
         screenSize = new Size(metrics.widthPixels, metrics.heightPixels);
