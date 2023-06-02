@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 holder.scriptName.setText(dataItem.getName());
                 CharSequence timeLabel = "";
                 if (dataItem.getTimestamp() != null) {
-                    timeLabel = DateFormat.format("yy-MM-dd HH:mm", dataItem.getTimestamp());
+                    timeLabel = DateFormat.format("yy/MM/dd HH:mm", dataItem.getTimestamp());
                 }
                 holder.modifiedTime.setText(timeLabel);
             }
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         startService(intent);
     }
 
-    private static class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView scriptName;
 
