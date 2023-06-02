@@ -8,6 +8,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -70,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
                     timeLabel = DateFormat.format("yy/MM/dd HH:mm", dataItem.getTimestamp());
                 }
                 holder.modifiedTime.setText(timeLabel);
+                holder.editButton.setOnClickListener((View view) -> {
+                    openScriptViewer(dataItem);
+                });
             }
 
             @Override
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setLayoutManager(layoutManager);
     }
 
-    private void openScriptViewer() {
+    private void openScriptViewer(ScriptDTO dataItem) {
         Intent intent = new Intent(this, EditActivity.class);
         startActivity(intent);
     }
@@ -93,16 +97,19 @@ public class MainActivity extends AppCompatActivity {
         startService(intent);
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
+    private static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView scriptName;
 
         public TextView modifiedTime;
 
+        public Button editButton;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             scriptName = itemView.findViewById(R.id.script_name);
             modifiedTime = itemView.findViewById(R.id.modified_time);
+            editButton = itemView.findViewById(R.id.edit_button);
         }
     }
 }
