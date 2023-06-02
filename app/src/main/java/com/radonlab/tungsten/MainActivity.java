@@ -83,6 +83,11 @@ public class MainActivity extends AppCompatActivity {
         listView.setLayoutManager(layoutManager);
     }
 
+    private void openScriptViewer() {
+        Intent intent = new Intent(this, EditActivity.class);
+        startActivity(intent);
+    }
+
     private void initScreenService() {
         Intent intent = new Intent(this, ScreenService.class);
         startService(intent);
