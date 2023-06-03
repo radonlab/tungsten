@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Tungsten</string>
+    <string name="action_button">Action Button</string>
     <string name="edit">Edit</string>
     <string name="touch_ball">Touch ball</string>
 </resources>

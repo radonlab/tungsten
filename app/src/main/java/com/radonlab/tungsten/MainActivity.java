@@ -12,12 +12,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.radonlab.tungsten.dto.ScriptDTO;
 
 import java.util.ArrayList;
@@ -28,12 +30,16 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView listView;
 
+    private FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.list_view);
+        fab = findViewById(R.id.fab);
         initScriptList();
+        initEventListener();
     }
 
     @Override
@@ -87,7 +93,13 @@ public class MainActivity extends AppCompatActivity {
         listView.setLayoutManager(layoutManager);
     }
 
-    private void openScriptViewer(ScriptDTO dataItem) {
+    private void initEventListener() {
+        fab.setOnClickListener((View view) -> {
+            openScriptViewer(null);
+        });
+    }
+
+    private void openScriptViewer(@Nullable ScriptDTO dataItem) {
         Intent intent = new Intent(this, EditActivity.class);
         startActivity(intent);
     }
