@@ -2,7 +2,10 @@ package com.radonlab.tungsten;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.amrdeveloper.codeview.CodeView;
@@ -39,6 +42,20 @@ public class EditActivity extends AppCompatActivity {
         if (!ds.isDisposed()) {
             ds.dispose();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.edit_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == 0) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private Disposable loadScriptData(int scriptId) {

@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Tungsten</string>
     <string name="action_button">Action Button</string>
-    <string name="edit">Edit</string>
     <string name="touch_ball">Touch ball</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
 </resources>
