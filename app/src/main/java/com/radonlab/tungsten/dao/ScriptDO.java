@@ -6,6 +6,8 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "userscript")
 public class ScriptDO {
+    public static final ScriptDO NO_RESULT = new ScriptDO();
+
     @PrimaryKey(autoGenerate = true)
     private int id;
 

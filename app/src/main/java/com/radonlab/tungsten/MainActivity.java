@@ -25,8 +25,14 @@ import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.AppDatabase;
 import com.radonlab.tungsten.dto.ScriptDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 1;
@@ -37,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     private AppDatabase db;
 
+    private Disposable ds;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.list_view);
         fab = findViewById(R.id.fab);
         db = AppDatabase.getInstance(this);
-        initScriptList();
+        ds = initScriptList();
         initEventListener();
     }
 
@@ -57,6 +65,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!ds.isDisposed()) {
+            ds.dispose();
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
@@ -64,9 +80,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initScriptList() {
-        List<ScriptDTO> dataSource = db.scriptDAO().getAll().stream().map(ScriptDTO::fromDO).collect(Collectors.toList());
-        listView.setAdapter(new RecyclerView.Adapter<ViewHolder>() {
+    private Disposable initScriptList() {
+        List<ScriptDTO> dataSource = new ArrayList<>();
+        RecyclerView.Adapter<ViewHolder> adapter = new RecyclerView.Adapter<ViewHolder>() {
             @NonNull
             @Override
             public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -93,10 +109,21 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MainActivity", "item count: " + dataSource.size());
                 return dataSource.size();
             }
-        });
+        };
+        listView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         listView.setLayoutManager(layoutManager);
+        // Load data source
+        return Observable.fromCallable(() -> db.scriptDAO().getAll())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((result) -> {
+                    List<ScriptDTO> newDataSource = result.stream().map(ScriptDTO::fromDO).collect(Collectors.toList());
+                    dataSource.clear();
+                    dataSource.addAll(newDataSource);
+                    adapter.notifyDataSetChanged();
+                });
     }
 
     private void initEventListener() {
