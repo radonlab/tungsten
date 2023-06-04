@@ -56,7 +56,10 @@ public class EditActivity extends AppCompatActivity {
                 .subscribe(result -> {
                     ScriptDTO script = result != ScriptDO.NO_RESULT ? ScriptDTO.fromDO(result) : new ScriptDTO("undefined", "");
                     Log.d("EditActivity", "loaded script: " + script.getId() + "#" + script.getName());
+                    setTitle(script.getName());
                     codeView.setText(script.getContent());
+                }, e -> {
+                    Log.e("EditActivity", "fatal", e);
                 });
     }
 }

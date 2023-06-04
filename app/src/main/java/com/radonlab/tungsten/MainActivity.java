@@ -1,6 +1,6 @@
 package com.radonlab.tungsten;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private Disposable initScriptList() {
         List<ScriptDTO> dataSource = new ArrayList<>();
         RecyclerView.Adapter<ViewHolder> adapter = new RecyclerView.Adapter<ViewHolder>() {
@@ -123,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
                     dataSource.clear();
                     dataSource.addAll(newDataSource);
                     adapter.notifyDataSetChanged();
+                }, e -> {
+                    Log.e("MainActivity", "fatal", e);
                 });
     }
 

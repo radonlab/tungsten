@@ -2,9 +2,10 @@ package com.radonlab.tungsten.dao;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "userscript")
+@Entity(tableName = "userscript", indices = @Index(value = "name", unique = true))
 public class ScriptDO {
     public static final ScriptDO NO_RESULT = new ScriptDO();
 
