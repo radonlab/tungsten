@@ -6,4 +6,5 @@
     <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="saved">Saved</string>
+    <string name="failed">Failed</string>
 </resources>

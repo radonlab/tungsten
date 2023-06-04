@@ -1,5 +1,6 @@
 package com.radonlab.tungsten;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -88,8 +89,19 @@ public class EditActivity extends AppCompatActivity {
                 });
     }
 
+    @SuppressLint("CheckResult")
     private void saveScriptData() {
-        db.scriptDAO().upsert(script.toDO());
-        Snackbar.make(contentView, R.string.saved, Snackbar.LENGTH_LONG).show();
+        Observable.fromCallable(() -> {
+                    db.scriptDAO().upsert(script.toDO());
+                    return true;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    Snackbar.make(contentView, R.string.saved, Snackbar.LENGTH_LONG).show();
+                }, e -> {
+                    Log.e("EditActivity", "fatal", e);
+                    Snackbar.make(contentView, R.string.failed, Snackbar.LENGTH_LONG).show();
+                });
     }
 }
