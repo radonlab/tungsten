@@ -1,6 +1,8 @@
 package com.radonlab.tungsten;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
@@ -65,6 +67,10 @@ public class EditActivity extends AppCompatActivity {
             saveScriptData();
             return true;
         }
+        if (item.getItemId() == R.id.delete_menu) {
+            confirmDeleteScriptData();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -92,9 +98,8 @@ public class EditActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void saveScriptData() {
-        Observable.fromCallable(() -> {
+        Observable.fromAction(() -> {
                     db.scriptDAO().upsert(script.toDO());
-                    return true;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -107,6 +112,36 @@ public class EditActivity extends AppCompatActivity {
                         reason = getString(R.string.failed_check);
                     }
                     Snackbar.make(contentView, reason, Snackbar.LENGTH_LONG).show();
+                });
+    }
+
+    private void confirmDeleteScriptData() {
+        String title = getString(R.string.confirm_delete) + " " + script.getName();
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setPositiveButton(R.string.ok, (DialogInterface dialog, int which) -> {
+                    if (script.getId() != null) {
+                        deleteScriptData();
+                    } else {
+                        Snackbar.make(contentView, R.string.unsaved, Snackbar.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    @SuppressLint("CheckResult")
+    private void deleteScriptData() {
+        Observable.fromAction(() -> {
+                    db.scriptDAO().delete(script.toDO());
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    Snackbar.make(contentView, R.string.deleted, Snackbar.LENGTH_LONG).show();
+                }, e -> {
+                    Log.e("EditActivity", "fatal", e);
+                    Snackbar.make(contentView, R.string.failed, Snackbar.LENGTH_LONG).show();
                 });
     }
 }

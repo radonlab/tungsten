@@ -6,6 +6,12 @@
     <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="saved">Saved</string>
+    <string name="unsaved">Unsaved</string>
+    <string name="delete">Delete</string>
+    <string name="deleted">Deleted</string>
+    <string name="confirm_delete">Confirm to delete</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="failed">Failed</string>
-    <string name="failed_check">Failed to meet data restrictions</string>
+    <string name="failed_check">Failed to meet the script restrictions</string>
 </resources>
