@@ -1,6 +1,7 @@
 package com.radonlab.tungsten;
 
 import android.annotation.SuppressLint;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -101,7 +102,11 @@ public class EditActivity extends AppCompatActivity {
                     Snackbar.make(contentView, R.string.saved, Snackbar.LENGTH_LONG).show();
                 }, e -> {
                     Log.e("EditActivity", "fatal", e);
-                    Snackbar.make(contentView, R.string.failed, Snackbar.LENGTH_LONG).show();
+                    String reason = getString(R.string.failed);
+                    if (e instanceof SQLiteConstraintException) {
+                        reason = getString(R.string.failed_check);
+                    }
+                    Snackbar.make(contentView, reason, Snackbar.LENGTH_LONG).show();
                 });
     }
 }

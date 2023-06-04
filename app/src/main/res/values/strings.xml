@@ -7,4 +7,5 @@
     <string name="save">Save</string>
     <string name="saved">Saved</string>
     <string name="failed">Failed</string>
+    <string name="failed_check">Failed to meet data restrictions</string>
 </resources>
