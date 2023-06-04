@@ -1,5 +1,6 @@
 package com.radonlab.tungsten.dto;
 
+import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptDO;
 
 public class ScriptDTO {
@@ -28,6 +29,9 @@ public class ScriptDTO {
     }
 
     public ScriptDO toDO() {
+        if (!this.name.endsWith(AppConstant.SCRIPT_EXT)) {
+            this.name = this.name + AppConstant.SCRIPT_EXT;
+        }
         ScriptDO scriptDO = new ScriptDO();
         scriptDO.setId(this.id);
         scriptDO.setName(this.name);

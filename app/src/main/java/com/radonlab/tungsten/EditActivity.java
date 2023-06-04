@@ -89,6 +89,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void saveScriptData() {
+        db.scriptDAO().upsert(script.toDO());
         Snackbar.make(contentView, R.string.saved, Snackbar.LENGTH_LONG).show();
     }
 }
