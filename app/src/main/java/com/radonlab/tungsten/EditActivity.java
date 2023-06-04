@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.amrdeveloper.codeview.CodeView;
+import com.google.android.material.snackbar.Snackbar;
 import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.AppDatabase;
 import com.radonlab.tungsten.dao.ScriptDO;
@@ -21,7 +23,11 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class EditActivity extends AppCompatActivity {
 
+    private View contentView;
+
     private CodeView codeView;
+
+    private ScriptDTO script;
 
     private AppDatabase db;
 
@@ -31,6 +37,7 @@ public class EditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+        contentView = findViewById(R.id.content_view);
         codeView = findViewById(R.id.code_view);
         db = AppDatabase.getInstance(this);
         ds = loadScriptData(getIntent().getIntExtra(AppConstant.SCRIPT_ID, -1));
@@ -52,7 +59,8 @@ public class EditActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == 0) {
+        if (item.getItemId() == R.id.save_menu) {
+            saveScriptData();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -71,12 +79,16 @@ public class EditActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
-                    ScriptDTO script = result != ScriptDO.NO_RESULT ? ScriptDTO.fromDO(result) : new ScriptDTO("undefined", "");
+                    script = result != ScriptDO.NO_RESULT ? ScriptDTO.fromDO(result) : new ScriptDTO("undefined", "");
                     Log.d("EditActivity", "loaded script: " + script.getId() + "#" + script.getName());
                     setTitle(script.getName());
                     codeView.setText(script.getContent());
                 }, e -> {
                     Log.e("EditActivity", "fatal", e);
                 });
+    }
+
+    private void saveScriptData() {
+        Snackbar.make(contentView, R.string.saved, Snackbar.LENGTH_LONG).show();
     }
 }
