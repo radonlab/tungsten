@@ -5,12 +5,9 @@ import com.radonlab.tungsten.dao.ScriptDO;
 public class ScriptDTO {
 
     private final Integer id;
-
-    private String name;
-
-    private String content;
-
     private final Long timestamp;
+    private String name;
+    private String content;
 
     public ScriptDTO(String name, String content) {
         this.id = null;
@@ -19,14 +16,18 @@ public class ScriptDTO {
         this.timestamp = null;
     }
 
-    public ScriptDTO(ScriptDO scriptDO) {
+    private ScriptDTO(ScriptDO scriptDO) {
         this.id = scriptDO.getId();
         this.name = scriptDO.getName();
         this.content = scriptDO.getContent();
         this.timestamp = scriptDO.getModifiedTime();
     }
 
-    ScriptDO toDO() {
+    public static ScriptDTO fromDO(ScriptDO scriptDO) {
+        return new ScriptDTO(scriptDO);
+    }
+
+    public ScriptDO toDO() {
         ScriptDO scriptDO = new ScriptDO();
         scriptDO.setId(this.id);
         scriptDO.setName(this.name);

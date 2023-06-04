@@ -10,10 +10,10 @@ import java.util.List;
 
 @Dao
 public interface ScriptDAO {
-    @Query("SELECT * FROM `script`")
+    @Query("SELECT * FROM userscript")
     List<ScriptDO> getAll();
 
-    @Query("SELECT * FROM `script` WHERE `id` = :scriptId")
+    @Query("SELECT * FROM userscript WHERE id = :scriptId")
     ScriptDO findById(int scriptId);
 
     @Insert

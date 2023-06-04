@@ -21,10 +21,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.radonlab.tungsten.constant.AppConstant;
+import com.radonlab.tungsten.dao.AppDatabase;
 import com.radonlab.tungsten.dto.ScriptDTO;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 1;
@@ -33,12 +35,15 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fab;
 
+    private AppDatabase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.list_view);
         fab = findViewById(R.id.fab);
+        db = AppDatabase.getInstance(this);
         initScriptList();
         initEventListener();
     }
@@ -60,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initScriptList() {
-        List<ScriptDTO> dataSource = new ArrayList<>();
+        List<ScriptDTO> dataSource = db.scriptDAO().getAll().stream().map(ScriptDTO::fromDO).collect(Collectors.toList());
         listView.setAdapter(new RecyclerView.Adapter<ViewHolder>() {
             @NonNull
             @Override
@@ -85,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public int getItemCount() {
-                Log.d("MainActivity", "dataSource size: " + dataSource.size());
+                Log.d("MainActivity", "item count: " + dataSource.size());
                 return dataSource.size();
             }
         });
@@ -102,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void openScriptViewer(@Nullable ScriptDTO dataItem, @Nullable View triggerView) {
         Intent intent = new Intent(this, EditActivity.class);
+        intent.putExtra(AppConstant.SCRIPT_ID, dataItem != null ? dataItem.getId() : null);
         Bundle bundle = null;
         if (triggerView != null) {
             int width = triggerView.getWidth();

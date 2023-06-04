@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(tableName = "userscript")
 public class ScriptDO {
     @PrimaryKey(autoGenerate = true)
     private int id;
