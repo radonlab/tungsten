@@ -1,6 +1,7 @@
 package com.radonlab.tungsten;
 
 import android.Manifest;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 holder.modifiedTime.setText(timeLabel);
                 holder.editButton.setOnClickListener((View view) -> {
-                    openScriptViewer(dataItem);
+                    openScriptViewer(dataItem, view);
                 });
             }
 
@@ -95,13 +96,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void initEventListener() {
         fab.setOnClickListener((View view) -> {
-            openScriptViewer(null);
+            openScriptViewer(null, view);
         });
     }
 
-    private void openScriptViewer(@Nullable ScriptDTO dataItem) {
+    private void openScriptViewer(@Nullable ScriptDTO dataItem, @Nullable View triggerView) {
         Intent intent = new Intent(this, EditActivity.class);
-        startActivity(intent);
+        Bundle bundle = null;
+        if (triggerView != null) {
+            int width = triggerView.getWidth();
+            int height = triggerView.getHeight();
+            int centerX = width / 2;
+            int centerY = height / 2;
+            ActivityOptions options = ActivityOptions.makeScaleUpAnimation(triggerView, centerX, centerY, width, height);
+            bundle = options.toBundle();
+        }
+        startActivity(intent, bundle);
     }
 
     private void initScreenService() {
