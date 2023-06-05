@@ -5,6 +5,7 @@
     <string name="touch_ball">Touch ball</string>
     <string name="edit">Edit</string>
     <string name="help">Help</string>
+    <string name="about">About %s</string>
     <string name="save">Save</string>
     <string name="saved">Saved</string>
     <string name="unsaved">Unsaved</string>
@@ -15,4 +16,8 @@
     <string name="cancel">Cancel</string>
     <string name="failed">Failed</string>
     <string name="failed_check">Failed to meet the script restrictions</string>
+    <string name="app_intro">
+        <b>%s</b> userscript manager for mobile<br />
+        SOURCE: <a href="https://github.com/radonlab/tungsten">https://github.com/radonlab/tungsten</a>
+    </string>
 </resources>

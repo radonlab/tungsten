@@ -2,8 +2,10 @@ package com.radonlab.tungsten;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
@@ -80,9 +82,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.help_menu) {
+            showHelpInfo();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showHelpInfo() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.about, getString(R.string.app_name)))
+                .setView(R.layout.dialog_help)
+                .setPositiveButton(R.string.ok, null)
+                .show();
+        TextView helpText = dialog.findViewById(R.id.help_text);
+        helpText.setText(Html.fromHtml(getString(R.string.app_intro, getString(R.string.app_name)), Html.FROM_HTML_MODE_COMPACT));
     }
 
     @Override
