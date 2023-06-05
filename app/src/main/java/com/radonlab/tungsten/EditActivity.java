@@ -119,6 +119,7 @@ public class EditActivity extends AppCompatActivity {
         String title = getString(R.string.confirm_delete) + " " + script.getName();
         new AlertDialog.Builder(this)
                 .setTitle(title)
+                .setIcon(R.drawable.ic_notice_inverse)
                 .setPositiveButton(R.string.ok, (DialogInterface dialog, int which) -> {
                     if (script.getId() != null) {
                         deleteScriptData();
