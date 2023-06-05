@@ -16,8 +16,9 @@
     <string name="cancel">Cancel</string>
     <string name="failed">Failed</string>
     <string name="failed_check">Failed to meet the script restrictions</string>
-    <string name="app_intro">
+    <string name="app_intro"><![CDATA[
         <b>%s</b> userscript manager for mobile<br />
         SOURCE: <a href="https://github.com/radonlab/tungsten">https://github.com/radonlab/tungsten</a>
+    ]]>
     </string>
 </resources>
