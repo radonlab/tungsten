@@ -23,17 +23,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.radonlab.tungsten.constant.AppConstant;
-import com.radonlab.tungsten.dao.AppDatabase;
+import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 1;
@@ -41,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView listView;
 
     private FloatingActionButton fab;
-
-    private AppDatabase db;
 
     private Disposable ds;
 
@@ -52,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.list_view);
         fab = findViewById(R.id.fab);
-        db = AppDatabase.getInstance(this);
         ds = initScriptList();
         initEventListener();
     }
@@ -143,9 +137,8 @@ public class MainActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         listView.setLayoutManager(layoutManager);
         // Load data source
-        return Observable.fromCallable(() -> db.scriptDAO().getAll())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        return ScriptRepo.getInstance(this)
+                .getAll()
                 .subscribe((result) -> {
                     List<ScriptDTO> newDataSource = result.stream().map(ScriptDTO::fromDO).collect(Collectors.toList());
                     dataSource.clear();

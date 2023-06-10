@@ -16,8 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.amrdeveloper.codeview.CodeView;
 import com.google.android.material.snackbar.Snackbar;
 import com.radonlab.tungsten.constant.AppConstant;
-import com.radonlab.tungsten.dao.AppDatabase;
 import com.radonlab.tungsten.dao.ScriptDO;
+import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -33,8 +33,6 @@ public class EditActivity extends AppCompatActivity {
 
     private ScriptDTO script;
 
-    private AppDatabase db;
-
     private Disposable ds;
 
     @Override
@@ -43,7 +41,6 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
         contentView = findViewById(R.id.content_view);
         codeView = findViewById(R.id.code_view);
-        db = AppDatabase.getInstance(this);
         ds = loadScriptData(getIntent().getIntExtra(AppConstant.SCRIPT_ID, -1));
     }
 
@@ -75,19 +72,10 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private Disposable loadScriptData(int scriptId) {
-        return Observable.fromCallable(() -> {
-                    if (scriptId != -1) {
-                        ScriptDO record = db.scriptDAO().findById(scriptId);
-                        if (record != null) {
-                            return record;
-                        }
-                    }
-                    return ScriptDO.NO_RESULT;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        return ScriptRepo.getInstance(this)
+                .findById(scriptId)
                 .subscribe(result -> {
-                    script = result != ScriptDO.NO_RESULT ? ScriptDTO.fromDO(result) : new ScriptDTO("undefined", "");
+                    script = result != null ? ScriptDTO.fromDO(result) : new ScriptDTO("undefined", "");
                     Log.d("EditActivity", "loaded script: " + script.getId() + "#" + script.getName());
                     setTitle(script.getName());
                     codeView.setText(script.getContent());
@@ -98,12 +86,9 @@ public class EditActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void saveScriptData() {
-        Observable.fromAction(() -> {
-                    db.scriptDAO().upsert(script.toDO());
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
+        ScriptRepo.getInstance(this)
+                .upsert(script.toDO())
+                .subscribe(() -> {
                     Snackbar.make(contentView, R.string.saved, Snackbar.LENGTH_LONG).show();
                 }, e -> {
                     Log.e("EditActivity", "fatal", e);
@@ -133,12 +118,9 @@ public class EditActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void deleteScriptData() {
-        Observable.fromAction(() -> {
-                    db.scriptDAO().delete(script.toDO());
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
+        ScriptRepo.getInstance(this)
+                .delete(script.toDO())
+                .subscribe(() -> {
                     Snackbar.make(contentView, R.string.deleted, Snackbar.LENGTH_LONG).show();
                 }, e -> {
                     Log.e("EditActivity", "fatal", e);
