@@ -16,8 +16,7 @@ public class ScriptDO {
 
     private String content;
 
-    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
-    private Long modifiedTime;
+    private Long modifiedTime = System.currentTimeMillis();
 
     public Integer getId() {
         return id;

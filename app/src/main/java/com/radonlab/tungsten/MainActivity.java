@@ -95,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.ok, null)
                 .show();
         TextView helpText = dialog.findViewById(R.id.help_text);
-        helpText.setText(Html.fromHtml(getString(R.string.app_intro, getString(R.string.app_name)), Html.FROM_HTML_MODE_COMPACT));
+        String helpString = getString(R.string.app_intro, getString(R.string.app_name));
+        helpText.setText(Html.fromHtml(helpString, Html.FROM_HTML_MODE_COMPACT));
     }
 
     @Override
