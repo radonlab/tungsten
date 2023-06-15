@@ -18,11 +18,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.radonlab.tungsten.base.BaseActivity;
 import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
@@ -31,7 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity {
+import io.reactivex.rxjava3.disposables.Disposable;
+
+public class MainActivity extends BaseActivity {
     private static final int PERMISSION_REQUEST_CODE = 1;
 
     private RecyclerView listView;
@@ -99,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @SuppressLint({"NotifyDataSetChanged", "CheckResult"})
     private void initScriptList() {
         List<ScriptDTO> dataSource = new ArrayList<>();
         RecyclerView.Adapter<ViewHolder> adapter = new RecyclerView.Adapter<ViewHolder>() {
@@ -135,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         listView.setLayoutManager(layoutManager);
         // Load data source
-        ScriptRepo.getInstance(this)
+        @SuppressLint("NotifyDataSetChanged")
+        Disposable disposable = ScriptRepo.getInstance(this)
                 .getAll()
                 .subscribe(result -> {
                     List<ScriptDTO> newDataSource = result.stream().map(ScriptDTO::fromDO).collect(Collectors.toList());
@@ -145,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 }, e -> {
                     Log.e("MainActivity", "fatal", e);
                 });
+        addDisposable(disposable);
     }
 
     private void initEventListener() {

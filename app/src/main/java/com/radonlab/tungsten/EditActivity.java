@@ -1,6 +1,5 @@
 package com.radonlab.tungsten;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteConstraintException;
@@ -11,15 +10,17 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.amrdeveloper.codeview.CodeView;
 import com.google.android.material.snackbar.Snackbar;
+import com.radonlab.tungsten.base.BaseActivity;
 import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
 
-public class EditActivity extends AppCompatActivity {
+import io.reactivex.rxjava3.disposables.Disposable;
+
+public class EditActivity extends BaseActivity {
 
     private View contentView;
 
@@ -55,9 +56,8 @@ public class EditActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressLint("CheckResult")
     private void loadScriptData(int scriptId) {
-        ScriptRepo.getInstance(this)
+        Disposable disposable = ScriptRepo.getInstance(this)
                 .findById(scriptId)
                 .subscribe(result -> {
                     script = result.map(ScriptDTO::fromDO)
@@ -68,11 +68,11 @@ public class EditActivity extends AppCompatActivity {
                 }, e -> {
                     Log.e("EditActivity", "fatal", e);
                 });
+        addDisposable(disposable);
     }
 
-    @SuppressLint("CheckResult")
     private void saveScriptData() {
-        ScriptRepo.getInstance(this)
+        Disposable disposable = ScriptRepo.getInstance(this)
                 .upsert(script.toDO())
                 .subscribe(() -> {
                     Snackbar.make(contentView, R.string.saved, Snackbar.LENGTH_LONG).show();
@@ -84,6 +84,7 @@ public class EditActivity extends AppCompatActivity {
                     }
                     Snackbar.make(contentView, reason, Snackbar.LENGTH_LONG).show();
                 });
+        addDisposable(disposable);
     }
 
     private void confirmDeleteScriptData() {
@@ -102,9 +103,8 @@ public class EditActivity extends AppCompatActivity {
                 .show();
     }
 
-    @SuppressLint("CheckResult")
     private void deleteScriptData() {
-        ScriptRepo.getInstance(this)
+        Disposable disposable = ScriptRepo.getInstance(this)
                 .delete(script.toDO())
                 .subscribe(() -> {
                     Snackbar.make(contentView, R.string.deleted, Snackbar.LENGTH_LONG).show();
@@ -112,5 +112,6 @@ public class EditActivity extends AppCompatActivity {
                     Log.e("EditActivity", "fatal", e);
                     Snackbar.make(contentView, R.string.failed, Snackbar.LENGTH_LONG).show();
                 });
+        addDisposable(disposable);
     }
 }
