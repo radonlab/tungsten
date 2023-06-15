@@ -7,6 +7,7 @@ import androidx.room.Query;
 import androidx.room.Upsert;
 
 import java.util.List;
+import java.util.Optional;
 
 @Dao
 public interface ScriptDAO {
@@ -14,7 +15,7 @@ public interface ScriptDAO {
     List<ScriptDO> getAll();
 
     @Query("SELECT * FROM userscript WHERE id = :scriptId")
-    ScriptDO findById(int scriptId);
+    Optional<ScriptDO> findById(int scriptId);
 
     @Insert
     void insert(ScriptDO script);

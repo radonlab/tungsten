@@ -1,7 +1,6 @@
 package com.radonlab.tungsten;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fab;
 
+    private ActivityResultLauncher<Intent> launcher;
+
     private Disposable ds;
 
     @Override
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.list_view);
         fab = findViewById(R.id.fab);
+        launcher = initEditActivityLauncher();
         ds = initScriptList();
         initEventListener();
     }
@@ -101,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private ActivityResultLauncher<Intent> initEditActivityLauncher() {
+        return registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            initScriptList();
+        });
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private Disposable initScriptList() {
         List<ScriptDTO> dataSource = new ArrayList<>();
@@ -121,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     timeLabel = DateFormat.format("yy/MM/dd HH:mm", dataItem.getTimestamp());
                 }
                 holder.modifiedTime.setText(timeLabel);
-                holder.editButton.setOnClickListener((View view) -> {
+                holder.editButton.setOnClickListener(view -> {
                     openScriptViewer(dataItem, view);
                 });
             }
@@ -139,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         // Load data source
         return ScriptRepo.getInstance(this)
                 .getAll()
-                .subscribe((result) -> {
+                .subscribe(result -> {
                     List<ScriptDTO> newDataSource = result.stream().map(ScriptDTO::fromDO).collect(Collectors.toList());
                     dataSource.clear();
                     dataSource.addAll(newDataSource);
@@ -150,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initEventListener() {
-        fab.setOnClickListener((View view) -> {
+        fab.setOnClickListener(view -> {
             openScriptViewer(null, view);
         });
     }
@@ -158,16 +168,7 @@ public class MainActivity extends AppCompatActivity {
     private void openScriptViewer(@Nullable ScriptDTO dataItem, @Nullable View triggerView) {
         Intent intent = new Intent(this, EditActivity.class);
         intent.putExtra(AppConstant.SCRIPT_ID, dataItem != null ? dataItem.getId() : null);
-        Bundle bundle = null;
-        if (triggerView != null) {
-            int width = triggerView.getWidth();
-            int height = triggerView.getHeight();
-            int centerX = width / 2;
-            int centerY = height / 2;
-            ActivityOptions options = ActivityOptions.makeScaleUpAnimation(triggerView, centerX, centerY, width, height);
-            bundle = options.toBundle();
-        }
-        startActivity(intent, bundle);
+        launcher.launch(intent);
     }
 
     private void initScreenService() {

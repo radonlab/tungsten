@@ -16,14 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.amrdeveloper.codeview.CodeView;
 import com.google.android.material.snackbar.Snackbar;
 import com.radonlab.tungsten.constant.AppConstant;
-import com.radonlab.tungsten.dao.ScriptDO;
 import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -75,7 +71,8 @@ public class EditActivity extends AppCompatActivity {
         return ScriptRepo.getInstance(this)
                 .findById(scriptId)
                 .subscribe(result -> {
-                    script = result != null ? ScriptDTO.fromDO(result) : new ScriptDTO("undefined", "");
+                    script = result.map(ScriptDTO::fromDO)
+                            .orElseGet(() -> new ScriptDTO("undefined", ""));
                     Log.d("EditActivity", "loaded script: " + script.getId() + "#" + script.getName());
                     setTitle(script.getName());
                     codeView.setText(script.getContent());

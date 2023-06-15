@@ -3,6 +3,7 @@ package com.radonlab.tungsten.dao;
 import android.content.Context;
 
 import java.util.List;
+import java.util.Optional;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
@@ -26,7 +27,7 @@ public class ScriptRepo {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ScriptDO> findById(int scriptId) {
+    public Observable<Optional<ScriptDO>> findById(int scriptId) {
         return Observable.fromCallable(() -> db.scriptDAO().findById(scriptId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
