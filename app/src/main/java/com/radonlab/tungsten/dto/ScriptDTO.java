@@ -36,7 +36,7 @@ public class ScriptDTO {
         scriptDO.setId(this.id);
         scriptDO.setName(this.name);
         scriptDO.setContent(this.content);
-        scriptDO.setModifiedTime(null);
+        scriptDO.setModifiedTime(System.currentTimeMillis());
         return scriptDO;
     }
 

@@ -14,7 +14,7 @@ public class ScriptDO {
 
     private String content;
 
-    private Long modifiedTime = System.currentTimeMillis();
+    private Long modifiedTime;
 
     public Integer getId() {
         return id;
