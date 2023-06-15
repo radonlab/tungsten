@@ -19,8 +19,6 @@ import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
 
-import io.reactivex.rxjava3.disposables.Disposable;
-
 public class EditActivity extends AppCompatActivity {
 
     private View contentView;
@@ -29,23 +27,13 @@ public class EditActivity extends AppCompatActivity {
 
     private ScriptDTO script;
 
-    private Disposable ds;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         contentView = findViewById(R.id.content_view);
         codeView = findViewById(R.id.code_view);
-        ds = loadScriptData(getIntent().getIntExtra(AppConstant.SCRIPT_ID, -1));
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (!ds.isDisposed()) {
-            ds.dispose();
-        }
+        loadScriptData(getIntent().getIntExtra(AppConstant.SCRIPT_ID, -1));
     }
 
     @Override
@@ -67,8 +55,9 @@ public class EditActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private Disposable loadScriptData(int scriptId) {
-        return ScriptRepo.getInstance(this)
+    @SuppressLint("CheckResult")
+    private void loadScriptData(int scriptId) {
+        ScriptRepo.getInstance(this)
                 .findById(scriptId)
                 .subscribe(result -> {
                     script = result.map(ScriptDTO::fromDO)

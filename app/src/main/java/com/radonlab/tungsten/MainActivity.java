@@ -31,8 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.reactivex.rxjava3.disposables.Disposable;
-
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 1;
 
@@ -42,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> launcher;
 
-    private Disposable ds;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.list_view);
         fab = findViewById(R.id.fab);
         launcher = initEditActivityLauncher();
-        ds = initScriptList();
+        initScriptList();
         initEventListener();
     }
 
@@ -62,14 +58,6 @@ public class MainActivity extends AppCompatActivity {
 //            Activity.requestPermissions(this, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, PERMISSION_REQUEST_CODE);
 //        }
 //    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (!ds.isDisposed()) {
-            ds.dispose();
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private Disposable initScriptList() {
+    @SuppressLint({"NotifyDataSetChanged", "CheckResult"})
+    private void initScriptList() {
         List<ScriptDTO> dataSource = new ArrayList<>();
         RecyclerView.Adapter<ViewHolder> adapter = new RecyclerView.Adapter<ViewHolder>() {
             @NonNull
@@ -147,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         listView.setLayoutManager(layoutManager);
         // Load data source
-        return ScriptRepo.getInstance(this)
+        ScriptRepo.getInstance(this)
                 .getAll()
                 .subscribe(result -> {
                     List<ScriptDTO> newDataSource = result.stream().map(ScriptDTO::fromDO).collect(Collectors.toList());
