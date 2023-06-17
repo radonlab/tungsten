@@ -3,9 +3,12 @@ package com.radonlab.tungsten;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -47,6 +51,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        checkAppPermissions();
         listView = findViewById(R.id.list_view);
         fab = findViewById(R.id.fab);
         launcher = initEditActivityLauncher();
@@ -55,19 +60,16 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (checkSelfPermission(Manifest.permission.SYSTEM_ALERT_WINDOW) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, AppConstant.PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == AppConstant.PERMISSION_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 initScreenService();
+            } else {
+                Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show();
+                if (!shouldShowRequestPermissionRationale(Manifest.permission.SYSTEM_ALERT_WINDOW)) {
+                    showAppPermissionPrompt();
+                }
             }
         }
     }
@@ -85,6 +87,25 @@ public class MainActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void checkAppPermissions() {
+        if (checkSelfPermission(Manifest.permission.SYSTEM_ALERT_WINDOW) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, AppConstant.PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    private void showAppPermissionPrompt() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.permission_denied)
+                .setMessage(R.string.config_permission)
+                .setPositiveButton(R.string.ok, (DialogInterface dialog, int which) -> {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.setData(Uri.fromParts("package", getPackageName(), null));
+                    startActivity(intent);
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void showHelpInfo() {
