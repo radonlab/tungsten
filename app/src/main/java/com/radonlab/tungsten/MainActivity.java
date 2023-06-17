@@ -1,8 +1,10 @@
 package com.radonlab.tungsten;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.format.DateFormat;
@@ -34,7 +36,6 @@ import java.util.stream.Collectors;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 public class MainActivity extends BaseActivity {
-    private static final int PERMISSION_REQUEST_CODE = 1;
 
     private RecyclerView listView;
 
@@ -53,13 +54,23 @@ public class MainActivity extends BaseActivity {
         initEventListener();
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (Context.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW) != PackageManager.PERMISSION_GRANTED) {
-//            Activity.requestPermissions(this, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, PERMISSION_REQUEST_CODE);
-//        }
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (checkSelfPermission(Manifest.permission.SYSTEM_ALERT_WINDOW) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, AppConstant.PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == AppConstant.PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initScreenService();
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,14 +96,6 @@ public class MainActivity extends BaseActivity {
         TextView helpText = dialog.findViewById(R.id.help_text);
         String helpString = getString(R.string.app_intro, getString(R.string.app_name));
         helpText.setText(Html.fromHtml(helpString, Html.FROM_HTML_MODE_COMPACT));
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            initScreenService();
-        }
     }
 
     private ActivityResultLauncher<Intent> initEditActivityLauncher() {

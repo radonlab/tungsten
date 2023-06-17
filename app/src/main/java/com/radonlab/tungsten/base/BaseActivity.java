@@ -14,6 +14,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     private CompositeDisposable disposables;
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        disposables = new CompositeDisposable();
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
         disposables = new CompositeDisposable();
