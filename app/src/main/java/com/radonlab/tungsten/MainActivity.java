@@ -42,7 +42,9 @@ public class MainActivity extends BaseActivity {
 
     private FloatingActionButton fab;
 
-    private ActivityResultLauncher<Intent> launcher;
+    private ActivityResultLauncher<Intent> editLauncher;
+
+    private ActivityResultLauncher<Intent> configLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +52,11 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.list_view);
         fab = findViewById(R.id.fab);
-        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        editLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             initScriptList();
+        });
+        configLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            checkOverlayPermission();
         });
         initScriptList();
         initEventListener();
@@ -88,7 +93,7 @@ public class MainActivity extends BaseActivity {
                 .setPositiveButton(R.string.ok, (DialogInterface dialog, int which) -> {
                     Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                     intent.setData(Uri.fromParts("package", getPackageName(), null));
-                    startActivity(intent);
+                    configLauncher.launch(intent);
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
@@ -163,7 +168,7 @@ public class MainActivity extends BaseActivity {
     private void openScriptViewer(@Nullable ScriptDTO dataItem, @Nullable View triggerView) {
         Intent intent = new Intent(this, EditActivity.class);
         intent.putExtra(AppConstant.SCRIPT_ID, dataItem != null ? dataItem.getId() : null);
-        launcher.launch(intent);
+        editLauncher.launch(intent);
     }
 
     private void initScreenService() {
