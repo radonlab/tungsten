@@ -1,11 +1,9 @@
 package com.radonlab.tungsten;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -18,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -51,27 +48,14 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        checkAppPermissions();
         listView = findViewById(R.id.list_view);
         fab = findViewById(R.id.fab);
-        launcher = initEditActivityLauncher();
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            initScriptList();
+        });
         initScriptList();
         initEventListener();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == AppConstant.PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initScreenService();
-            } else {
-                Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show();
-                if (!shouldShowRequestPermissionRationale(Manifest.permission.SYSTEM_ALERT_WINDOW)) {
-                    showAppPermissionPrompt();
-                }
-            }
-        }
+        checkOverlayPermission();
     }
 
     @Override
@@ -89,18 +73,20 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void checkAppPermissions() {
-        if (checkSelfPermission(Manifest.permission.SYSTEM_ALERT_WINDOW) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, AppConstant.PERMISSION_REQUEST_CODE);
+    private void checkOverlayPermission() {
+        if (!Settings.canDrawOverlays(this)) {
+            showOverlayPermissionPrompt();
+        } else {
+            initScreenService();
         }
     }
 
-    private void showAppPermissionPrompt() {
+    private void showOverlayPermissionPrompt() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.permission_denied)
                 .setMessage(R.string.config_permission)
                 .setPositiveButton(R.string.ok, (DialogInterface dialog, int which) -> {
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                     intent.setData(Uri.fromParts("package", getPackageName(), null));
                     startActivity(intent);
                 })
@@ -117,12 +103,6 @@ public class MainActivity extends BaseActivity {
         TextView helpText = dialog.findViewById(R.id.help_text);
         String helpString = getString(R.string.app_intro, getString(R.string.app_name));
         helpText.setText(Html.fromHtml(helpString, Html.FROM_HTML_MODE_COMPACT));
-    }
-
-    private ActivityResultLauncher<Intent> initEditActivityLauncher() {
-        return registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            initScriptList();
-        });
     }
 
     private void initScriptList() {
