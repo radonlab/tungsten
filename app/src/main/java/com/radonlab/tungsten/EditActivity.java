@@ -43,6 +43,7 @@ public class EditActivity extends BaseActivity {
         contentView = findViewById(R.id.content_view);
         codeView = findViewById(R.id.code_view);
         scriptId = getIntent().getIntExtra(AppConstant.SCRIPT_ID, -1);
+        codeView.setEnableLineNumber(true);
         initScriptData(scriptId);
     }
 
@@ -90,7 +91,11 @@ public class EditActivity extends BaseActivity {
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.import_file)
                 .setView(R.layout.dialog_edit)
-                .setPositiveButton(R.string.ok, (DialogInterface dialog, int which) -> {
+                .setPositiveButton(R.string.ok, null)
+                .show();
+        editText = alertDialog.findViewById(R.id.edit_text);
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                .setOnClickListener(view -> {
                     String url = Optional.ofNullable(editText.getText())
                             .map(Object::toString)
                             .map(String::trim)
@@ -98,6 +103,8 @@ public class EditActivity extends BaseActivity {
                     if (url.isEmpty()) {
                         editText.setError(getString(R.string.required));
                         return;
+                    } else {
+                        alertDialog.dismiss();
                     }
                     Disposable disposable = RequestUtil.get(url)
                             .subscribe(content -> {
@@ -107,9 +114,7 @@ public class EditActivity extends BaseActivity {
                                 Snackbar.make(contentView, reason, Snackbar.LENGTH_LONG).show();
                             });
                     addDisposable(disposable);
-                })
-                .show();
-        editText = alertDialog.findViewById(R.id.edit_text);
+                });
     }
 
     private void saveScriptData() {

@@ -8,6 +8,7 @@
     <string name="about">About %s</string>
     <string name="import_">Import</string>
     <string name="import_file">Import file</string>
+    <string name="http_s">http(s)://</string>
     <string name="required">This is required</string>
     <string name="save">Save</string>
     <string name="saved">Saved</string>
