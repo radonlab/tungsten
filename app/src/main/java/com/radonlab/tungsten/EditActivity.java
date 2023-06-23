@@ -26,6 +26,8 @@ public class EditActivity extends BaseActivity {
 
     private CodeView codeView;
 
+    private int scriptId;
+
     private ScriptDTO script;
 
     @Override
@@ -34,17 +36,23 @@ public class EditActivity extends BaseActivity {
         setContentView(R.layout.activity_edit);
         contentView = findViewById(R.id.content_view);
         codeView = findViewById(R.id.code_view);
-        loadScriptData(getIntent().getIntExtra(AppConstant.SCRIPT_ID, -1));
+        scriptId = getIntent().getIntExtra(AppConstant.SCRIPT_ID, -1);
+        loadScriptData(scriptId);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.edit_menu, menu);
+        MenuItem importMenuItem = menu.findItem(R.id.import_menu);
+        importMenuItem.setVisible(scriptId == -1);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.import_menu) {
+            return true;
+        }
         if (item.getItemId() == R.id.save_menu) {
             saveScriptData();
             return true;
