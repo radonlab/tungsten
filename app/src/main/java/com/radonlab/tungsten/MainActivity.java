@@ -100,12 +100,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showHelpInfo() {
-        AlertDialog dialog = new AlertDialog.Builder(this)
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.about, getString(R.string.app_name)))
                 .setView(R.layout.dialog_help)
                 .setPositiveButton(R.string.ok, null)
                 .show();
-        TextView helpText = dialog.findViewById(R.id.help_text);
+        TextView helpText = alertDialog.findViewById(R.id.help_text);
         String helpString = getString(R.string.app_intro, getString(R.string.app_name));
         helpText.setText(Html.fromHtml(helpString, Html.FROM_HTML_MODE_COMPACT));
     }

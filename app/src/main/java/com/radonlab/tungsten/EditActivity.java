@@ -20,6 +20,8 @@ import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
 import com.radonlab.tungsten.util.RequestUtil;
 
+import java.util.Optional;
+
 import io.reactivex.rxjava3.disposables.Disposable;
 
 public class EditActivity extends BaseActivity {
@@ -27,6 +29,8 @@ public class EditActivity extends BaseActivity {
     private View contentView;
 
     private CodeView codeView;
+
+    private TextInputEditText editText;
 
     private int scriptId;
 
@@ -83,11 +87,19 @@ public class EditActivity extends BaseActivity {
     }
 
     private void importScriptData() {
-        new AlertDialog.Builder(this)
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.import_file)
-                .setView(new TextInputEditText(this))
+                .setView(R.layout.dialog_edit)
                 .setPositiveButton(R.string.ok, (DialogInterface dialog, int which) -> {
-                    Disposable disposable = RequestUtil.get("https://square.github.io/okhttp/")
+                    String url = Optional.ofNullable(editText.getText())
+                            .map(Object::toString)
+                            .map(String::trim)
+                            .orElse("");
+                    if (url.isEmpty()) {
+                        editText.setError(getString(R.string.required));
+                        return;
+                    }
+                    Disposable disposable = RequestUtil.get(url)
                             .subscribe(content -> {
                                 codeView.setText(content);
                             }, e -> {
@@ -97,6 +109,7 @@ public class EditActivity extends BaseActivity {
                     addDisposable(disposable);
                 })
                 .show();
+        editText = alertDialog.findViewById(R.id.edit_text);
     }
 
     private void saveScriptData() {
