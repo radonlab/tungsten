@@ -16,7 +16,7 @@ import android.view.accessibility.AccessibilityEvent;
 
 import com.radonlab.tungsten.scripting.Script;
 import com.radonlab.tungsten.scripting.ScriptRunner;
-import com.radonlab.tungsten.ui.DndState;
+import com.radonlab.tungsten.util.DndState;
 import com.whl.quickjs.wrapper.QuickJSException;
 
 public class ScreenService extends AccessibilityService {

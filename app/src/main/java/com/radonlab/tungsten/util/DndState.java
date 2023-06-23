@@ -1,4 +1,4 @@
-package com.radonlab.tungsten.ui;
+package com.radonlab.tungsten.util;
 
 public class DndState {
 
