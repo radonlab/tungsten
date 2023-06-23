@@ -13,10 +13,12 @@ import androidx.annotation.NonNull;
 
 import com.amrdeveloper.codeview.CodeView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 import com.radonlab.tungsten.base.BaseActivity;
 import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
+import com.radonlab.tungsten.util.RequestUtil;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 
@@ -37,7 +39,7 @@ public class EditActivity extends BaseActivity {
         contentView = findViewById(R.id.content_view);
         codeView = findViewById(R.id.code_view);
         scriptId = getIntent().getIntExtra(AppConstant.SCRIPT_ID, -1);
-        loadScriptData(scriptId);
+        initScriptData(scriptId);
     }
 
     @Override
@@ -51,6 +53,7 @@ public class EditActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.import_menu) {
+            importScriptData();
             return true;
         }
         if (item.getItemId() == R.id.save_menu) {
@@ -64,7 +67,7 @@ public class EditActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadScriptData(int scriptId) {
+    private void initScriptData(int scriptId) {
         Disposable disposable = ScriptRepo.getInstance(this)
                 .findById(scriptId)
                 .subscribe(result -> {
@@ -77,6 +80,23 @@ public class EditActivity extends BaseActivity {
                     Log.e("EditActivity", "fatal", e);
                 });
         addDisposable(disposable);
+    }
+
+    private void importScriptData() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.import_file)
+                .setView(new TextInputEditText(this))
+                .setPositiveButton(R.string.ok, (DialogInterface dialog, int which) -> {
+                    Disposable disposable = RequestUtil.get("https://square.github.io/okhttp/")
+                            .subscribe(content -> {
+                                codeView.setText(content);
+                            }, e -> {
+                                String reason = e.getMessage();
+                                Snackbar.make(contentView, reason, Snackbar.LENGTH_LONG).show();
+                            });
+                    addDisposable(disposable);
+                })
+                .show();
     }
 
     private void saveScriptData() {

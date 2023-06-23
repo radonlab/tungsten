@@ -1,10 +1,10 @@
 package com.radonlab.tungsten.util;
 
-import android.content.Context;
-import android.widget.Toast;
+import java.io.IOException;
 
-import androidx.annotation.Nullable;
-
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -12,7 +12,7 @@ import okhttp3.Response;
 public class RequestUtil {
     private static final OkHttpClient httpClient = new OkHttpClient();
 
-    public static @Nullable String get(Context context, String url) {
+    private static String doRequest(String url) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .get()
@@ -23,9 +23,12 @@ public class RequestUtil {
             } else {
                 return "";
             }
-        } catch (Exception e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-            return null;
         }
+    }
+
+    public static Observable<String> get(String url) {
+        return Observable.fromCallable(() -> doRequest(url))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }
