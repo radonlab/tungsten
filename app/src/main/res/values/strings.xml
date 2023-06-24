@@ -11,6 +11,7 @@
     <string name="http_s">http(s)://</string>
     <string name="required">This is required</string>
     <string name="save">Save</string>
+    <string name="save_file">Save file</string>
     <string name="saved">Saved</string>
     <string name="unsaved">Unsaved</string>
     <string name="delete">Delete</string>

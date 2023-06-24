@@ -3,6 +3,7 @@ package com.radonlab.tungsten;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteConstraintException;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -37,8 +38,6 @@ public class EditActivity extends BaseActivity {
 
     private CodeView codeView;
 
-    private TextInputEditText editText;
-
     private int scriptId;
 
     private ScriptDTO script;
@@ -49,7 +48,7 @@ public class EditActivity extends BaseActivity {
         setContentView(R.layout.activity_edit);
         contentView = findViewById(R.id.content_view);
         codeView = findViewById(R.id.code_view);
-        scriptId = getIntent().getIntExtra(AppConstant.SCRIPT_ID, -1);
+        scriptId = getIntent().getIntExtra(AppConstant.SCRIPT_ID, AppConstant.UNDEFINED_SCRIPT_ID);
         setupCodeView();
         initScriptData();
     }
@@ -58,7 +57,7 @@ public class EditActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.edit_menu, menu);
         MenuItem importMenuItem = menu.findItem(R.id.import_menu);
-        importMenuItem.setVisible(scriptId == -1);
+        importMenuItem.setVisible(scriptId == AppConstant.UNDEFINED_SCRIPT_ID);
         return true;
     }
 
@@ -91,6 +90,7 @@ public class EditActivity extends BaseActivity {
             ColorTheme colorTheme = new ColorTheme(jsonObject);
             JavaScriptLanguage.applyTheme(codeView, colorTheme);
             int fontSize = getResources().getDimensionPixelSize(R.dimen.text_normal);
+            codeView.setTypeface(Typeface.MONOSPACE);
             codeView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize);
             codeView.setEnableLineNumber(true);
             codeView.setLineNumberTextSize(fontSize);
@@ -122,7 +122,7 @@ public class EditActivity extends BaseActivity {
                 .setView(R.layout.dialog_edit)
                 .setPositiveButton(R.string.ok, null)
                 .show();
-        editText = alertDialog.findViewById(R.id.edit_text);
+        TextInputEditText editText = alertDialog.findViewById(R.id.edit_text);
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
                 .setOnClickListener(view -> {
                     String url = Optional.ofNullable(editText.getText())
@@ -149,7 +149,8 @@ public class EditActivity extends BaseActivity {
                 });
     }
 
-    private void saveScriptData() {
+    private void doSaveScriptData() {
+        script.setContent(codeView.getText().toString());
         Disposable disposable = ScriptRepo.getInstance(this)
                 .upsert(script.toDO())
                 .subscribe(() -> {
@@ -163,6 +164,34 @@ public class EditActivity extends BaseActivity {
                     Snackbar.make(contentView, reason, Snackbar.LENGTH_LONG).show();
                 });
         addDisposable(disposable);
+    }
+
+    private void saveScriptData() {
+        if (scriptId == AppConstant.UNDEFINED_SCRIPT_ID) {
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.save_file)
+                    .setView(R.layout.dialog_edit)
+                    .setPositiveButton(R.string.ok, null)
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+            TextInputEditText editText = alertDialog.findViewById(R.id.edit_text);
+            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                    .setOnClickListener(view -> {
+                        String filename = Optional.ofNullable(editText.getText())
+                                .map(Object::toString)
+                                .map(String::trim)
+                                .orElse("");
+                        if (filename.isEmpty()) {
+                            editText.setError(getString(R.string.required));
+                            return;
+                        } else {
+                            alertDialog.dismiss();
+                            script.setName(filename);
+                        }
+                        doSaveScriptData();
+                    });
+        }
+        doSaveScriptData();
     }
 
     private void confirmDeleteScriptData() {
