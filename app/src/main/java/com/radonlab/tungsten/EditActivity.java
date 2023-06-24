@@ -190,8 +190,9 @@ public class EditActivity extends BaseActivity {
                         }
                         doSaveScriptData();
                     });
+        } else {
+            doSaveScriptData();
         }
-        doSaveScriptData();
     }
 
     private void confirmDeleteScriptData() {

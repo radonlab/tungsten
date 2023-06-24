@@ -5,8 +5,8 @@ import com.radonlab.tungsten.dao.ScriptDO;
 
 public class ScriptDTO {
 
-    private final Integer id;
     private final Long timestamp;
+    private Integer id;
     private String name;
     private String content;
 
@@ -29,6 +29,9 @@ public class ScriptDTO {
     }
 
     public ScriptDO toDO() {
+        if (this.id == AppConstant.UNDEFINED_SCRIPT_ID) {
+            this.id = null;
+        }
         if (!this.name.endsWith(AppConstant.SCRIPT_EXT)) {
             this.name = this.name + AppConstant.SCRIPT_EXT;
         }
