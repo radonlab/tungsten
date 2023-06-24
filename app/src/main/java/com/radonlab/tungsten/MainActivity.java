@@ -1,5 +1,6 @@
 package com.radonlab.tungsten;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -130,6 +131,7 @@ public class MainActivity extends BaseActivity {
 
     private void reloadListView() {
         // Load data source
+        @SuppressLint("NotifyDataSetChanged")
         Disposable disposable = ScriptRepo.getInstance(this)
                 .getAll()
                 .subscribe(result -> {
@@ -150,6 +152,7 @@ public class MainActivity extends BaseActivity {
         preferences.registerOnSharedPreferenceChangeListener(this::selectTargetScript);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void selectTargetScript(SharedPreferences prefs, String key) {
         if (key.equals(AppConstant.SCRIPT_ID)) {
             selectedScriptId = prefs.getInt(AppConstant.SCRIPT_ID, AppConstant.UNDEFINED_SCRIPT_ID);
