@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 
+import androidx.annotation.Nullable;
+
 import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
@@ -47,7 +49,7 @@ public class ScreenService extends AccessibilityService {
 
     private Size touchBallSize;
 
-    private ScriptDTO script;
+    private @Nullable ScriptDTO script;
 
     private CompositeDisposable disposables;
 
@@ -136,8 +138,9 @@ public class ScreenService extends AccessibilityService {
     private void onTrigger(View view) {
         try {
             Log.d("ScreenService", "triggered");
-            Script script = new Script("foo.js", "app.toast('hello');");
-            scriptRunner.execute(script);
+            if (script != null) {
+                scriptRunner.execute(Script.from(script));
+            }
         } catch (QuickJSException e) {
             Log.w("ScreenService", e);
         }

@@ -1,14 +1,20 @@
 package com.radonlab.tungsten.scripting;
 
+import com.radonlab.tungsten.dto.ScriptDTO;
+
 public class Script {
 
-    private String filename;
+    private final String filename;
 
-    private String content;
+    private final String content;
 
     public Script(String filename, String content) {
         this.filename = filename;
         this.content = content;
+    }
+
+    public static Script from(ScriptDTO scriptDTO) {
+        return new Script(scriptDTO.getName(), scriptDTO.getContent());
     }
 
     public String getFilename() {

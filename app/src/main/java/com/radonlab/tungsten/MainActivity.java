@@ -182,7 +182,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initScreenService(int scriptId) {
-        preferences.edit().putInt(AppConstant.SCRIPT_ID, scriptId).apply();
         Intent intent = new Intent(this, ScreenService.class);
         if (ScreenService.running()) {
             stopService(intent);
