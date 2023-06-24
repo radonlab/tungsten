@@ -18,6 +18,7 @@ import com.radonlab.tungsten.base.BaseActivity;
 import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
+import com.radonlab.tungsten.syntax.JavaScriptLanguage;
 import com.radonlab.tungsten.util.RequestUtil;
 
 import java.util.Optional;
@@ -43,8 +44,8 @@ public class EditActivity extends BaseActivity {
         contentView = findViewById(R.id.content_view);
         codeView = findViewById(R.id.code_view);
         scriptId = getIntent().getIntExtra(AppConstant.SCRIPT_ID, -1);
-        codeView.setEnableLineNumber(true);
-        initScriptData(scriptId);
+        setupCodeView();
+        initScriptData();
     }
 
     @Override
@@ -72,7 +73,11 @@ public class EditActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initScriptData(int scriptId) {
+    private void setupCodeView() {
+        JavaScriptLanguage.applyMonokaiTheme(this, codeView);
+    }
+
+    private void initScriptData() {
         Disposable disposable = ScriptRepo.getInstance(this)
                 .findById(scriptId)
                 .subscribe(result -> {
