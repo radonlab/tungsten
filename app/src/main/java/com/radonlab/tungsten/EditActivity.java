@@ -80,7 +80,7 @@ public class EditActivity extends BaseActivity {
 
     private void setupCodeView() {
         try {
-            String json = AssetUtil.readAsString(this, 0);
+            String json = AssetUtil.readAsString(this, R.raw.monokai_pro);
             JSONObject jsonObject;
             if (json != null) {
                 jsonObject = new JSONObject(json);

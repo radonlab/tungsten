@@ -28,13 +28,12 @@ public class ColorTheme {
     }
 
     public int getColor(String name) {
-        String value;
         try {
-            value = colorMap.getString(name);
+            String value = colorMap.getString(name);
+            return Color.parseColor(value);
         } catch (JSONException e) {
             Log.e("ColorTheme", "getColor", e);
-            value = "0xFF000000";
+            return Color.MAGENTA;
         }
-        return Color.parseColor(value);
     }
 }
