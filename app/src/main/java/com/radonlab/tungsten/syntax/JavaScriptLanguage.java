@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 public class JavaScriptLanguage {
     // Language Keywords
+    private static final String[] KEYWORDS = {};
+
     private static final Pattern PATTERN_KEYWORDS = Pattern.compile("\\b(abstract|boolean|break|byte|case|catch" +
             "|char|class|continue|default|do|double|else" +
             "|enum|extends|final|finally|float|for|if" +
@@ -61,7 +63,7 @@ public class JavaScriptLanguage {
     }
 
     public static String[] getKeywords() {
-        return context.getResources().getStringArray(R.array.java_keywords);
+        return KEYWORDS;
     }
 
     public static List<Code> getCodeList() {

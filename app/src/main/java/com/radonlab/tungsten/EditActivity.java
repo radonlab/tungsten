@@ -18,8 +18,13 @@ import com.radonlab.tungsten.base.BaseActivity;
 import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptRepo;
 import com.radonlab.tungsten.dto.ScriptDTO;
+import com.radonlab.tungsten.syntax.ColorTheme;
 import com.radonlab.tungsten.syntax.JavaScriptLanguage;
+import com.radonlab.tungsten.util.AssetUtil;
 import com.radonlab.tungsten.util.RequestUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Optional;
 
@@ -74,9 +79,21 @@ public class EditActivity extends BaseActivity {
     }
 
     private void setupCodeView() {
-        JavaScriptLanguage.applyTheme(codeView);
-        codeView.setIndentationStarts(JavaScriptLanguage.getIndentationStarts());
-        codeView.setIndentationEnds(JavaScriptLanguage.getIndentationEnds());
+        try {
+            String json = AssetUtil.readAsString(this, 0);
+            JSONObject jsonObject;
+            if (json != null) {
+                jsonObject = new JSONObject(json);
+            } else {
+                jsonObject = new JSONObject();
+            }
+            ColorTheme colorTheme = new ColorTheme(jsonObject);
+            JavaScriptLanguage.applyTheme(codeView, colorTheme);
+            codeView.setIndentationStarts(JavaScriptLanguage.getIndentationStarts());
+            codeView.setIndentationEnds(JavaScriptLanguage.getIndentationEnds());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void initScriptData() {

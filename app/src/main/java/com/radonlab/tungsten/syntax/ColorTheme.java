@@ -1,9 +1,10 @@
 package com.radonlab.tungsten.syntax;
 
 import android.graphics.Color;
+import android.util.Log;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ColorTheme {
     public static final String BLACK = "black";
@@ -20,14 +21,20 @@ public class ColorTheme {
     public static final String DIMMED4 = "dimmed4";
     public static final String DIMMED5 = "dimmed5";
 
-    private final Map<String, String> colorMap;
+    private final JSONObject colorMap;
 
-    public ColorTheme() {
-        this.colorMap = new HashMap<>();
+    public ColorTheme(JSONObject colorMap) {
+        this.colorMap = colorMap;
     }
 
     public int getColor(String name) {
-        String value = colorMap.getOrDefault(name, "0xFF000000");
+        String value;
+        try {
+            value = colorMap.getString(name);
+        } catch (JSONException e) {
+            Log.e("ColorTheme", "getColor", e);
+            value = "0xFF000000";
+        }
         return Color.parseColor(value);
     }
 }
