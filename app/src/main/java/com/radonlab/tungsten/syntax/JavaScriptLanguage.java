@@ -3,7 +3,6 @@ package com.radonlab.tungsten.syntax;
 import com.amrdeveloper.codeview.Code;
 import com.amrdeveloper.codeview.CodeView;
 import com.amrdeveloper.codeview.Keyword;
-import com.radonlab.tungsten.R;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,27 +12,26 @@ import java.util.regex.Pattern;
 
 public class JavaScriptLanguage {
     // Language Keywords
-    private static final String[] KEYWORDS = {};
+    private static final String[] KEYWORDS = {
+            "await", "break", "case", "catch", "class", "const", "continue", "debugger", "default",
+            "delete", "do", "else", "enum", "export", "extends", "false", "finally", "for", "function",
+            "if", "implements", "import", "in", "instanceof", "interface", "let", "new", "null",
+            "package", "private", "protected", "public", "return", "super", "switch", "static", "this",
+            "throw", "try", "true", "typeof", "var", "void", "while", "with", "yield"
+    };
 
-    private static final Pattern PATTERN_KEYWORDS = Pattern.compile("\\b(abstract|boolean|break|byte|case|catch" +
-            "|char|class|continue|default|do|double|else" +
-            "|enum|extends|final|finally|float|for|if" +
-            "|implements|import|instanceof|int|interface" +
-            "|long|native|new|null|package|private|protected" +
-            "|public|return|short|static|strictfp|super|switch" +
-            "|synchronized|this|throw|transient|try|void|volatile|while)\\b");
+    private static final Pattern PATTERN_KEYWORDS = Pattern.compile("\\b(" + String.join("|", KEYWORDS) + ")\\b");
 
-    private static final Pattern PATTERN_BUILTINS = Pattern.compile("[,:;[->]{}()]");
+    private static final Pattern PATTERN_BUILTINS = Pattern.compile("[,:;\\[\\]{}()]");
     private static final Pattern PATTERN_SINGLE_LINE_COMMENT = Pattern.compile("//[^\\n]*");
     private static final Pattern PATTERN_MULTI_LINE_COMMENT = Pattern.compile("/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/");
     private static final Pattern PATTERN_ATTRIBUTE = Pattern.compile("\\.[a-zA-Z0-9_]+");
-    private static final Pattern PATTERN_OPERATION = Pattern.compile(":|==|>|<|!=|>=|<=|->|=|>|<|%|-|-=|%=|\\+|\\-|\\-=|\\+=|\\^|\\&|\\|::|\\?|\\*");
+    private static final Pattern PATTERN_OPERATION = Pattern.compile(":|==|>|<|!=|>=|<=|=>|=|%|-|-=|%=|\\+|\\+=|\\^|&|\\|::|\\?|\\*");
     private static final Pattern PATTERN_GENERIC = Pattern.compile("<[a-zA-Z0-9,<>]+>");
     private static final Pattern PATTERN_ANNOTATION = Pattern.compile("@.[a-zA-Z0-9]+");
     private static final Pattern PATTERN_TODO_COMMENT = Pattern.compile("//TODO[^\n]*");
     private static final Pattern PATTERN_NUMBERS = Pattern.compile("\\b(\\d*[.]?\\d+)\\b");
-    private static final Pattern PATTERN_CHAR = Pattern.compile("['](.*?)[']");
-    private static final Pattern PATTERN_STRING = Pattern.compile("[\"](.*?)[\"]");
+    private static final Pattern PATTERN_STRING = Pattern.compile("[\"'](.*?)[\"']");
     private static final Pattern PATTERN_HEX = Pattern.compile("0x[0-9a-fA-F]+");
 
     public static void applyTheme(CodeView codeView, ColorTheme colorTheme) {
@@ -43,7 +41,6 @@ public class JavaScriptLanguage {
         codeView.setBackgroundColor(colorTheme.getColor(ColorTheme.BLACK));
         // Syntax Colors
         codeView.addSyntaxPattern(PATTERN_HEX, colorTheme.getColor(ColorTheme.ACCENT6));
-        codeView.addSyntaxPattern(PATTERN_CHAR, colorTheme.getColor(ColorTheme.ACCENT4));
         codeView.addSyntaxPattern(PATTERN_STRING, colorTheme.getColor(ColorTheme.ACCENT2));
         codeView.addSyntaxPattern(PATTERN_NUMBERS, colorTheme.getColor(ColorTheme.ACCENT6));
         codeView.addSyntaxPattern(PATTERN_KEYWORDS, colorTheme.getColor(ColorTheme.ACCENT1));
