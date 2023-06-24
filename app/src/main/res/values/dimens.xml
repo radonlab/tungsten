@@ -2,6 +2,7 @@
 <resources>
     <dimen name="touch_ball_width">48dp</dimen>
     <dimen name="touch_ball_height">48dp</dimen>
+    <dimen name="space_tiny">3dp</dimen>
     <dimen name="space_small">5dp</dimen>
     <dimen name="space_medium">10dp</dimen>
     <dimen name="space_large">20dp</dimen>

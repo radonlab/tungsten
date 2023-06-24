@@ -1,6 +1,5 @@
 package com.radonlab.tungsten;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,11 +42,15 @@ public class MainActivity extends BaseActivity {
 
     private FloatingActionButton fab;
 
+    private ListAdapter listAdapter;
+
     private SharedPreferences preferences;
 
     private ActivityResultLauncher<Intent> editLauncher;
 
     private ActivityResultLauncher<Intent> configLauncher;
+
+    private int selectedScriptId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +58,15 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.list_view);
         fab = findViewById(R.id.fab);
+        listAdapter = initListView();
         preferences = getSharedPreferences(AppConstant.PREFERENCE_NAME, MODE_PRIVATE);
         editLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            initScriptList();
+            reloadListView();
         });
         configLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             checkOverlayPermission();
         });
-        initScriptList();
+        reloadListView();
         initEventListener();
         checkOverlayPermission();
     }
@@ -86,8 +90,8 @@ public class MainActivity extends BaseActivity {
         if (!Settings.canDrawOverlays(this)) {
             showOverlayPermissionPrompt();
         } else {
-            int scriptId = preferences.getInt(AppConstant.SCRIPT_ID, AppConstant.UNDEFINED_SCRIPT_ID);
-            initScreenService(scriptId);
+            selectedScriptId = preferences.getInt(AppConstant.SCRIPT_ID, AppConstant.UNDEFINED_SCRIPT_ID);
+            initScreenService(selectedScriptId);
         }
     }
 
@@ -115,54 +119,24 @@ public class MainActivity extends BaseActivity {
         helpText.setText(Html.fromHtml(helpString, Html.FROM_HTML_MODE_COMPACT));
     }
 
-    private void initScriptList() {
-        List<ScriptDTO> dataSource = new ArrayList<>();
-        RecyclerView.Adapter<ViewHolder> adapter = new RecyclerView.Adapter<ViewHolder>() {
-            @NonNull
-            @Override
-            public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View listItem = getLayoutInflater().inflate(R.layout.list_item, parent, false);
-                return new ViewHolder(listItem);
-            }
-
-            @Override
-            public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-                ScriptDTO dataItem = dataSource.get(position);
-                holder.scriptName.setText(dataItem.getName());
-                CharSequence timeLabel = "";
-                if (dataItem.getTimestamp() != null) {
-                    timeLabel = DateFormat.format("yy/MM/dd HH:mm", dataItem.getTimestamp());
-                }
-                holder.modifiedTime.setText(timeLabel);
-                holder.editButton.setOnClickListener(view -> {
-                    openScriptViewer(dataItem);
-                });
-                holder.itemView.setOnClickListener(view -> {
-                    int scriptId = dataItem.getId();
-                    preferences.edit().putInt(AppConstant.SCRIPT_ID, scriptId).apply();
-                    initScreenService(scriptId);
-                });
-            }
-
-            @Override
-            public int getItemCount() {
-                Log.d("MainActivity", "item count: " + dataSource.size());
-                return dataSource.size();
-            }
-        };
+    private ListAdapter initListView() {
+        ListAdapter adapter = new ListAdapter();
         listView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         listView.setLayoutManager(layoutManager);
+        return adapter;
+    }
+
+    private void reloadListView() {
         // Load data source
-        @SuppressLint("NotifyDataSetChanged")
         Disposable disposable = ScriptRepo.getInstance(this)
                 .getAll()
                 .subscribe(result -> {
                     List<ScriptDTO> newDataSource = result.stream().map(ScriptDTO::fromDO).collect(Collectors.toList());
-                    dataSource.clear();
-                    dataSource.addAll(newDataSource);
-                    adapter.notifyDataSetChanged();
+                    listAdapter.dataSource.clear();
+                    listAdapter.dataSource.addAll(newDataSource);
+                    listAdapter.notifyDataSetChanged();
                 }, e -> {
                     Log.e("MainActivity", "fatal", e);
                 });
@@ -173,6 +147,14 @@ public class MainActivity extends BaseActivity {
         fab.setOnClickListener(view -> {
             openScriptViewer(null);
         });
+        preferences.registerOnSharedPreferenceChangeListener(this::selectTargetScript);
+    }
+
+    private void selectTargetScript(SharedPreferences prefs, String key) {
+        if (key.equals(AppConstant.SCRIPT_ID)) {
+            selectedScriptId = prefs.getInt(AppConstant.SCRIPT_ID, AppConstant.UNDEFINED_SCRIPT_ID);
+            listAdapter.notifyDataSetChanged();
+        }
     }
 
     private void openScriptViewer(@Nullable ScriptDTO dataItem) {
@@ -192,6 +174,8 @@ public class MainActivity extends BaseActivity {
 
     private static class ViewHolder extends RecyclerView.ViewHolder {
 
+        public View indicator;
+
         public TextView scriptName;
 
         public TextView modifiedTime;
@@ -200,9 +184,49 @@ public class MainActivity extends BaseActivity {
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            indicator = itemView.findViewById(R.id.indicator);
             scriptName = itemView.findViewById(R.id.script_name);
             modifiedTime = itemView.findViewById(R.id.modified_time);
             editButton = itemView.findViewById(R.id.edit_button);
+        }
+    }
+
+    private class ListAdapter extends RecyclerView.Adapter<ViewHolder> {
+
+        public final List<ScriptDTO> dataSource = new ArrayList<>();
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View listItem = getLayoutInflater().inflate(R.layout.list_item, parent, false);
+            return new ViewHolder(listItem);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            ScriptDTO dataItem = dataSource.get(position);
+            holder.scriptName.setText(dataItem.getName());
+            CharSequence timeLabel = "";
+            if (dataItem.getTimestamp() != null) {
+                timeLabel = DateFormat.format("yy/MM/dd HH:mm", dataItem.getTimestamp());
+            }
+            boolean selected = dataItem.getId() == selectedScriptId;
+            holder.indicator.setSelected(selected);
+            holder.modifiedTime.setText(timeLabel);
+            holder.editButton.setOnClickListener(view -> {
+                openScriptViewer(dataItem);
+            });
+            holder.itemView.setOnClickListener(view -> {
+                int scriptId = dataItem.getId();
+                preferences.edit().putInt(AppConstant.SCRIPT_ID, scriptId).apply();
+                initScreenService(scriptId);
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            Log.d("MainActivity", "item count: " + dataSource.size());
+            return dataSource.size();
         }
     }
 }

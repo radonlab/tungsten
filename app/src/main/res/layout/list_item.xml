@@ -6,6 +6,12 @@
     android:layout_marginHorizontal="@dimen/space_large"
     android:layout_marginVertical="@dimen/space_medium">
 
+    <View
+        android:id="@+id/indicator"
+        android:layout_width="@dimen/space_tiny"
+        android:layout_height="match_parent"
+        android:background="@drawable/cl_indicator_background" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
