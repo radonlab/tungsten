@@ -132,6 +132,9 @@ public class MainActivity extends BaseActivity {
                 holder.editButton.setOnClickListener(view -> {
                     openScriptViewer(dataItem);
                 });
+                holder.itemView.setOnClickListener(view -> {
+                    initScreenService();
+                });
             }
 
             @Override
@@ -173,6 +176,9 @@ public class MainActivity extends BaseActivity {
 
     private void initScreenService() {
         Intent intent = new Intent(this, ScreenService.class);
+        if (ScreenService.running()) {
+            stopService(intent);
+        }
         startService(intent);
     }
 

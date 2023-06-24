@@ -24,6 +24,8 @@ public class ScreenService extends AccessibilityService {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
             WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
 
+    private static boolean isRunning = false;
+
     private ScriptRunner scriptRunner;
 
     private DndState dndState;
@@ -39,6 +41,10 @@ public class ScreenService extends AccessibilityService {
     private Size touchBallSize;
 
     public ScreenService() {
+    }
+
+    public static boolean running() {
+        return isRunning;
     }
 
     @SuppressLint({"RtlHardcoded", "InflateParams"})
@@ -67,12 +73,16 @@ public class ScreenService extends AccessibilityService {
         layoutParams.y = (int) (screenSize.getHeight() * 0.8f) - touchBallSize.getHeight();
         windowManager.addView(touchBall, layoutParams);
         initEventListener();
+        Log.i("ScreenService", "created");
+        isRunning = true;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         windowManager.removeView(touchBall);
+        Log.i("ScreenService", "destroyed");
+        isRunning = false;
     }
 
     @Override
