@@ -6,7 +6,6 @@
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edit_text"
-        android:hint="@string/http_s"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="@dimen/space_large_x"

@@ -123,6 +123,7 @@ public class EditActivity extends BaseActivity {
                 .setPositiveButton(R.string.ok, null)
                 .show();
         TextInputEditText editText = alertDialog.findViewById(R.id.edit_text);
+        editText.setHint(R.string.http_s);
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
                 .setOnClickListener(view -> {
                     String url = Optional.ofNullable(editText.getText())
@@ -175,6 +176,7 @@ public class EditActivity extends BaseActivity {
                     .setNegativeButton(R.string.cancel, null)
                     .show();
             TextInputEditText editText = alertDialog.findViewById(R.id.edit_text);
+            editText.setHint(R.string.file_name);
             alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
                     .setOnClickListener(view -> {
                         String filename = Optional.ofNullable(editText.getText())
