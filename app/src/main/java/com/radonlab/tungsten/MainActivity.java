@@ -130,7 +130,7 @@ public class MainActivity extends BaseActivity {
                 }
                 holder.modifiedTime.setText(timeLabel);
                 holder.editButton.setOnClickListener(view -> {
-                    openScriptViewer(dataItem, view);
+                    openScriptViewer(dataItem);
                 });
             }
 
@@ -161,11 +161,11 @@ public class MainActivity extends BaseActivity {
 
     private void initEventListener() {
         fab.setOnClickListener(view -> {
-            openScriptViewer(null, view);
+            openScriptViewer(null);
         });
     }
 
-    private void openScriptViewer(@Nullable ScriptDTO dataItem, @Nullable View triggerView) {
+    private void openScriptViewer(@Nullable ScriptDTO dataItem) {
         Intent intent = new Intent(this, EditActivity.class);
         intent.putExtra(AppConstant.SCRIPT_ID, dataItem != null ? dataItem.getId() : null);
         editLauncher.launch(intent);

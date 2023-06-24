@@ -106,7 +106,7 @@ public class EditActivity extends BaseActivity {
                 .findById(scriptId)
                 .subscribe(result -> {
                     script = result.map(ScriptDTO::fromDO)
-                            .orElseGet(() -> new ScriptDTO("undefined", ""));
+                            .orElseGet(() -> new ScriptDTO(scriptId, "undefined", ""));
                     Log.d("EditActivity", "loaded script: " + script.getId() + "#" + script.getName());
                     setTitle(script.getName());
                     codeView.setText(script.getContent());

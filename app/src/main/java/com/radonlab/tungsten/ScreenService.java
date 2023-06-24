@@ -49,7 +49,7 @@ public class ScreenService extends AccessibilityService {
         dndState = new DndState();
         LayoutInflater inflater = LayoutInflater.from(this);
         touchBall = inflater.inflate(R.layout.touch_ball, null, false);
-        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        windowManager = getSystemService(WindowManager.class);
         // Init dimensions
         initDimensions();
         // Init layout

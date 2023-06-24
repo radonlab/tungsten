@@ -10,8 +10,8 @@ public class ScriptDTO {
     private String name;
     private String content;
 
-    public ScriptDTO(String name, String content) {
-        this.id = null;
+    public ScriptDTO(Integer id, String name, String content) {
+        this.id = id;
         this.name = name;
         this.content = content;
         this.timestamp = null;
