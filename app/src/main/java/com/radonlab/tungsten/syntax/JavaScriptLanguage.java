@@ -1,8 +1,5 @@
 package com.radonlab.tungsten.syntax;
 
-import android.content.Context;
-import android.content.res.Resources;
-
 import com.amrdeveloper.codeview.Code;
 import com.amrdeveloper.codeview.CodeView;
 import com.amrdeveloper.codeview.Keyword;
@@ -15,7 +12,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class JavaScriptLanguage {
-    //Language Keywords
+    // Language Keywords
     private static final Pattern PATTERN_KEYWORDS = Pattern.compile("\\b(abstract|boolean|break|byte|case|catch" +
             "|char|class|continue|default|do|double|else" +
             "|enum|extends|final|finally|float|for|if" +
@@ -37,43 +34,41 @@ public class JavaScriptLanguage {
     private static final Pattern PATTERN_STRING = Pattern.compile("[\"](.*?)[\"]");
     private static final Pattern PATTERN_HEX = Pattern.compile("0x[0-9a-fA-F]+");
 
-    public static void applyMonokaiTheme(Context context, CodeView codeView) {
+    public static void applyTheme(CodeView codeView, ColorTheme colorTheme) {
         codeView.resetSyntaxPatternList();
         codeView.resetHighlighter();
 
-        Resources resources = context.getResources();
+        // View Background
+        codeView.setBackgroundColor((black));
 
-        //View Background
-        codeView.setBackgroundColor(resources.getColor(R.color.monokia_pro_black));
+        // Syntax Colors
+        codeView.addSyntaxPattern(PATTERN_HEX, colorTheme.getColor(purple));
+        codeView.addSyntaxPattern(PATTERN_CHAR, colorTheme.getColor(green));
+        codeView.addSyntaxPattern(PATTERN_STRING, colorTheme.getColor(orange));
+        codeView.addSyntaxPattern(PATTERN_NUMBERS, colorTheme.getColor(purple));
+        codeView.addSyntaxPattern(PATTERN_KEYWORDS, colorTheme.getColor(pink));
+        codeView.addSyntaxPattern(PATTERN_BUILTINS, colorTheme.getColor(white));
+        codeView.addSyntaxPattern(PATTERN_SINGLE_LINE_COMMENT, colorTheme.getColor(grey));
+        codeView.addSyntaxPattern(PATTERN_MULTI_LINE_COMMENT, colorTheme.getColor(grey));
+        codeView.addSyntaxPattern(PATTERN_ANNOTATION, colorTheme.getColor(pink));
+        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, colorTheme.getColor(sky));
+        codeView.addSyntaxPattern(PATTERN_GENERIC, colorTheme.getColor(pink));
+        codeView.addSyntaxPattern(PATTERN_OPERATION, colorTheme.getColor(pink));
+        // Default Color
+        codeView.setTextColor(colorTheme.getColor(white));
 
-        //Syntax Colors
-        codeView.addSyntaxPattern(PATTERN_HEX, resources.getColor(R.color.monokia_pro_purple));
-        codeView.addSyntaxPattern(PATTERN_CHAR, resources.getColor(R.color.monokia_pro_green));
-        codeView.addSyntaxPattern(PATTERN_STRING, resources.getColor(R.color.monokia_pro_orange));
-        codeView.addSyntaxPattern(PATTERN_NUMBERS, resources.getColor(R.color.monokia_pro_purple));
-        codeView.addSyntaxPattern(PATTERN_KEYWORDS, resources.getColor(R.color.monokia_pro_pink));
-        codeView.addSyntaxPattern(PATTERN_BUILTINS, resources.getColor(R.color.monokia_pro_white));
-        codeView.addSyntaxPattern(PATTERN_SINGLE_LINE_COMMENT, resources.getColor(R.color.monokia_pro_grey));
-        codeView.addSyntaxPattern(PATTERN_MULTI_LINE_COMMENT, resources.getColor(R.color.monokia_pro_grey));
-        codeView.addSyntaxPattern(PATTERN_ANNOTATION, resources.getColor(R.color.monokia_pro_pink));
-        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, resources.getColor(R.color.monokia_pro_sky));
-        codeView.addSyntaxPattern(PATTERN_GENERIC, resources.getColor(R.color.monokia_pro_pink));
-        codeView.addSyntaxPattern(PATTERN_OPERATION, resources.getColor(R.color.monokia_pro_pink));
-        //Default Color
-        codeView.setTextColor(resources.getColor(R.color.monokia_pro_white));
-
-        codeView.addSyntaxPattern(PATTERN_TODO_COMMENT, resources.getColor(R.color.gold));
+        codeView.addSyntaxPattern(PATTERN_TODO_COMMENT, colorTheme.getColor(gold));
 
         codeView.reHighlightSyntax();
     }
 
-    public static String[] getKeywords(Context context) {
+    public static String[] getKeywords() {
         return context.getResources().getStringArray(R.array.java_keywords);
     }
 
-    public static List<Code> getCodeList(Context context) {
+    public static List<Code> getCodeList() {
         List<Code> codeList = new ArrayList<>();
-        String[] keywords = getKeywords(context);
+        String[] keywords = getKeywords();
         for (String keyword : keywords) {
             codeList.add(new Keyword(keyword));
         }

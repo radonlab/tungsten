@@ -74,7 +74,9 @@ public class EditActivity extends BaseActivity {
     }
 
     private void setupCodeView() {
-        JavaScriptLanguage.applyMonokaiTheme(this, codeView);
+        JavaScriptLanguage.applyTheme(codeView);
+        codeView.setIndentationStarts(JavaScriptLanguage.getIndentationStarts());
+        codeView.setIndentationEnds(JavaScriptLanguage.getIndentationEnds());
     }
 
     private void initScriptData() {
