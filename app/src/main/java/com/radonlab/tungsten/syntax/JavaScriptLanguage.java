@@ -37,27 +37,25 @@ public class JavaScriptLanguage {
     public static void applyTheme(CodeView codeView, ColorTheme colorTheme) {
         codeView.resetSyntaxPatternList();
         codeView.resetHighlighter();
-
         // View Background
-        codeView.setBackgroundColor((black));
-
+        codeView.setBackgroundColor(colorTheme.getColor(ColorTheme.BLACK));
         // Syntax Colors
-        codeView.addSyntaxPattern(PATTERN_HEX, colorTheme.getColor(purple));
-        codeView.addSyntaxPattern(PATTERN_CHAR, colorTheme.getColor(green));
-        codeView.addSyntaxPattern(PATTERN_STRING, colorTheme.getColor(orange));
-        codeView.addSyntaxPattern(PATTERN_NUMBERS, colorTheme.getColor(purple));
-        codeView.addSyntaxPattern(PATTERN_KEYWORDS, colorTheme.getColor(pink));
-        codeView.addSyntaxPattern(PATTERN_BUILTINS, colorTheme.getColor(white));
-        codeView.addSyntaxPattern(PATTERN_SINGLE_LINE_COMMENT, colorTheme.getColor(grey));
-        codeView.addSyntaxPattern(PATTERN_MULTI_LINE_COMMENT, colorTheme.getColor(grey));
-        codeView.addSyntaxPattern(PATTERN_ANNOTATION, colorTheme.getColor(pink));
-        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, colorTheme.getColor(sky));
-        codeView.addSyntaxPattern(PATTERN_GENERIC, colorTheme.getColor(pink));
-        codeView.addSyntaxPattern(PATTERN_OPERATION, colorTheme.getColor(pink));
+        codeView.addSyntaxPattern(PATTERN_HEX, colorTheme.getColor(ColorTheme.ACCENT6));
+        codeView.addSyntaxPattern(PATTERN_CHAR, colorTheme.getColor(ColorTheme.ACCENT4));
+        codeView.addSyntaxPattern(PATTERN_STRING, colorTheme.getColor(ColorTheme.ACCENT2));
+        codeView.addSyntaxPattern(PATTERN_NUMBERS, colorTheme.getColor(ColorTheme.ACCENT6));
+        codeView.addSyntaxPattern(PATTERN_KEYWORDS, colorTheme.getColor(ColorTheme.ACCENT1));
+        codeView.addSyntaxPattern(PATTERN_BUILTINS, colorTheme.getColor(ColorTheme.WHITE));
+        codeView.addSyntaxPattern(PATTERN_SINGLE_LINE_COMMENT, colorTheme.getColor(ColorTheme.DIMMED3));
+        codeView.addSyntaxPattern(PATTERN_MULTI_LINE_COMMENT, colorTheme.getColor(ColorTheme.DIMMED3));
+        codeView.addSyntaxPattern(PATTERN_ANNOTATION, colorTheme.getColor(ColorTheme.ACCENT1));
+        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, colorTheme.getColor(ColorTheme.ACCENT5));
+        codeView.addSyntaxPattern(PATTERN_GENERIC, colorTheme.getColor(ColorTheme.ACCENT1));
+        codeView.addSyntaxPattern(PATTERN_OPERATION, colorTheme.getColor(ColorTheme.ACCENT1));
         // Default Color
-        codeView.setTextColor(colorTheme.getColor(white));
-
-        codeView.addSyntaxPattern(PATTERN_TODO_COMMENT, colorTheme.getColor(gold));
+        codeView.setTextColor(colorTheme.getColor(ColorTheme.WHITE));
+        // Tag Color
+        codeView.addSyntaxPattern(PATTERN_TODO_COMMENT, colorTheme.getColor(ColorTheme.ACCENT3));
 
         codeView.reHighlightSyntax();
     }
