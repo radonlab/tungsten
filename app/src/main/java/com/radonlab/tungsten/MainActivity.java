@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -42,6 +43,8 @@ public class MainActivity extends BaseActivity {
 
     private FloatingActionButton fab;
 
+    private SharedPreferences preferences;
+
     private ActivityResultLauncher<Intent> editLauncher;
 
     private ActivityResultLauncher<Intent> configLauncher;
@@ -52,6 +55,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.list_view);
         fab = findViewById(R.id.fab);
+        preferences = getSharedPreferences(AppConstant.PREFERENCE_NAME, MODE_PRIVATE);
         editLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             initScriptList();
         });
@@ -82,7 +86,8 @@ public class MainActivity extends BaseActivity {
         if (!Settings.canDrawOverlays(this)) {
             showOverlayPermissionPrompt();
         } else {
-            initScreenService();
+            int scriptId = preferences.getInt(AppConstant.SCRIPT_ID, AppConstant.UNDEFINED_SCRIPT_ID);
+            initScreenService(scriptId);
         }
     }
 
@@ -133,7 +138,9 @@ public class MainActivity extends BaseActivity {
                     openScriptViewer(dataItem);
                 });
                 holder.itemView.setOnClickListener(view -> {
-                    initScreenService();
+                    int scriptId = dataItem.getId();
+                    preferences.edit().putInt(AppConstant.SCRIPT_ID, scriptId).apply();
+                    initScreenService(scriptId);
                 });
             }
 
@@ -174,11 +181,13 @@ public class MainActivity extends BaseActivity {
         editLauncher.launch(intent);
     }
 
-    private void initScreenService() {
+    private void initScreenService(int scriptId) {
+        preferences.edit().putInt(AppConstant.SCRIPT_ID, scriptId).apply();
         Intent intent = new Intent(this, ScreenService.class);
         if (ScreenService.running()) {
             stopService(intent);
         }
+        intent.putExtra(AppConstant.SCRIPT_ID, scriptId);
         startService(intent);
     }
 

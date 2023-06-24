@@ -2,6 +2,7 @@ package com.radonlab.tungsten;
 
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.util.DisplayMetrics;
@@ -14,10 +15,16 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 
+import com.radonlab.tungsten.constant.AppConstant;
+import com.radonlab.tungsten.dao.ScriptRepo;
+import com.radonlab.tungsten.dto.ScriptDTO;
 import com.radonlab.tungsten.scripting.Script;
 import com.radonlab.tungsten.scripting.ScriptRunner;
 import com.radonlab.tungsten.util.DndState;
 import com.whl.quickjs.wrapper.QuickJSException;
+
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 public class ScreenService extends AccessibilityService {
     private static final int LAYOUT_TYPE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
@@ -40,8 +47,9 @@ public class ScreenService extends AccessibilityService {
 
     private Size touchBallSize;
 
-    public ScreenService() {
-    }
+    private ScriptDTO script;
+
+    private CompositeDisposable disposables;
 
     public static boolean running() {
         return isRunning;
@@ -73,7 +81,8 @@ public class ScreenService extends AccessibilityService {
         layoutParams.y = (int) (screenSize.getHeight() * 0.8f) - touchBallSize.getHeight();
         windowManager.addView(touchBall, layoutParams);
         initEventListener();
-        Log.i("ScreenService", "created");
+        disposables = new CompositeDisposable();
+        Log.d("ScreenService", "created");
         isRunning = true;
     }
 
@@ -81,8 +90,25 @@ public class ScreenService extends AccessibilityService {
     public void onDestroy() {
         super.onDestroy();
         windowManager.removeView(touchBall);
-        Log.i("ScreenService", "destroyed");
+        disposables.dispose();
+        Log.d("ScreenService", "destroyed");
         isRunning = false;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        int scriptId = intent.getIntExtra(AppConstant.SCRIPT_ID, AppConstant.UNDEFINED_SCRIPT_ID);
+        Disposable disposable = ScriptRepo.getInstance(this)
+                .findById(scriptId)
+                .subscribe(result -> {
+                    script = result.map(ScriptDTO::fromDO)
+                            .orElse(null);
+                    Log.d("ScreenService", "loaded script: " + script);
+                }, e -> {
+                    Log.e("ScreenService", "fatal", e);
+                });
+        disposables.add(disposable);
+        return START_STICKY;
     }
 
     @Override

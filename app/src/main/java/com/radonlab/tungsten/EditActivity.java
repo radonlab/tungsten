@@ -107,7 +107,7 @@ public class EditActivity extends BaseActivity {
                 .subscribe(result -> {
                     script = result.map(ScriptDTO::fromDO)
                             .orElseGet(() -> new ScriptDTO(scriptId, "undefined", ""));
-                    Log.d("EditActivity", "loaded script: " + script.getId() + "#" + script.getName());
+                    Log.d("EditActivity", "loaded script: " + script);
                     setTitle(script.getName());
                     codeView.setText(script.getContent());
                 }, e -> {

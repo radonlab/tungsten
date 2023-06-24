@@ -1,5 +1,7 @@
 package com.radonlab.tungsten.dto;
 
+import androidx.annotation.NonNull;
+
 import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptDO;
 
@@ -26,6 +28,12 @@ public class ScriptDTO {
 
     public static ScriptDTO fromDO(ScriptDO scriptDO) {
         return new ScriptDTO(scriptDO);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "ScriptDTO{id=" + id + ", name='" + name + "'}";
     }
 
     public ScriptDO toDO() {
