@@ -4,14 +4,12 @@
     android:id="@+id/content_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="@dimen/space_medium"
     tools:context=".EditActivity">
 
     <com.amrdeveloper.codeview.CodeView
         android:id="@+id/code_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/gray_700"
         android:dropDownWidth="150dp"
         android:dropDownHorizontalOffset="0dp"
         android:dropDownSelector="@color/gray_700"

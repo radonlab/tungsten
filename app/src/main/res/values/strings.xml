@@ -20,6 +20,7 @@
     <string name="cancel">Cancel</string>
     <string name="failed">Failed</string>
     <string name="failed_check">Failed to meet the script restrictions</string>
+    <string name="failed_request">Failed to request</string>
     <string name="permission_denied">Permission denied</string>
     <string name="config_permission">Need to grant permissions from app settings</string>
     <string name="app_intro"><![CDATA[

@@ -51,10 +51,12 @@ public class JavaScriptLanguage {
         codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, colorTheme.getColor(ColorTheme.ACCENT5));
         codeView.addSyntaxPattern(PATTERN_GENERIC, colorTheme.getColor(ColorTheme.ACCENT1));
         codeView.addSyntaxPattern(PATTERN_OPERATION, colorTheme.getColor(ColorTheme.ACCENT1));
-        // Default Color
-        codeView.setTextColor(colorTheme.getColor(ColorTheme.WHITE));
         // Tag Color
         codeView.addSyntaxPattern(PATTERN_TODO_COMMENT, colorTheme.getColor(ColorTheme.ACCENT3));
+        // Default Color
+        codeView.setTextColor(colorTheme.getColor(ColorTheme.WHITE));
+        // Misc Color
+        codeView.setLineNumberTextColor(colorTheme.getColor(ColorTheme.DIMMED4));
 
         codeView.reHighlightSyntax();
     }

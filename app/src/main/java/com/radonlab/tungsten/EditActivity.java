@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -89,6 +90,10 @@ public class EditActivity extends BaseActivity {
             }
             ColorTheme colorTheme = new ColorTheme(jsonObject);
             JavaScriptLanguage.applyTheme(codeView, colorTheme);
+            int fontSize = getResources().getDimensionPixelSize(R.dimen.text_normal);
+            codeView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize);
+            codeView.setEnableLineNumber(true);
+            codeView.setLineNumberTextSize(fontSize);
             codeView.setIndentationStarts(JavaScriptLanguage.getIndentationStarts());
             codeView.setIndentationEnds(JavaScriptLanguage.getIndentationEnds());
         } catch (JSONException e) {
@@ -135,6 +140,9 @@ public class EditActivity extends BaseActivity {
                                 codeView.setText(content);
                             }, e -> {
                                 String reason = e.getMessage();
+                                if (reason == null) {
+                                    reason = getString(R.string.failed_request);
+                                }
                                 Snackbar.make(contentView, reason, Snackbar.LENGTH_LONG).show();
                             });
                     addDisposable(disposable);
