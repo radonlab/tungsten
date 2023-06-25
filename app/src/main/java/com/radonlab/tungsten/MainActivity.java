@@ -67,6 +67,7 @@ public class MainActivity extends BaseActivity {
         configLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             checkOverlayPermission();
         });
+        selectedScriptId = preferences.getInt(AppConstant.SCRIPT_ID, AppConstant.UNDEFINED_SCRIPT_ID);
         reloadListView();
         initEventListener();
         checkOverlayPermission();
@@ -91,7 +92,6 @@ public class MainActivity extends BaseActivity {
         if (!Settings.canDrawOverlays(this)) {
             showOverlayPermissionPrompt();
         } else {
-            selectedScriptId = preferences.getInt(AppConstant.SCRIPT_ID, AppConstant.UNDEFINED_SCRIPT_ID);
             initScreenService(selectedScriptId);
         }
     }
@@ -138,6 +138,7 @@ public class MainActivity extends BaseActivity {
                     List<ScriptDTO> newDataSource = result.stream().map(ScriptDTO::fromDO).collect(Collectors.toList());
                     listAdapter.dataSource.clear();
                     listAdapter.dataSource.addAll(newDataSource);
+                    listAdapter.setSelectionId(selectedScriptId);
                     listAdapter.notifyDataSetChanged();
                 }, e -> {
                     Log.e("MainActivity", "fatal", e);
@@ -152,11 +153,10 @@ public class MainActivity extends BaseActivity {
         preferences.registerOnSharedPreferenceChangeListener(this::selectTargetScript);
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private void selectTargetScript(SharedPreferences prefs, String key) {
         if (key.equals(AppConstant.SCRIPT_ID)) {
             selectedScriptId = prefs.getInt(AppConstant.SCRIPT_ID, AppConstant.UNDEFINED_SCRIPT_ID);
-            listAdapter.notifyDataSetChanged();
+            initScreenService(selectedScriptId);
         }
     }
 
@@ -197,6 +197,15 @@ public class MainActivity extends BaseActivity {
 
         public int selectedPosition = RecyclerView.NO_POSITION;
 
+        public ListAdapter() {
+            setHasStableIds(true);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return dataSource.get(position).getId();
+        }
+
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -224,7 +233,7 @@ public class MainActivity extends BaseActivity {
                 preferences.edit().putInt(AppConstant.SCRIPT_ID, scriptId).apply();
                 // Repaint
                 int unselectedPosition = selectedPosition;
-                selectedPosition = position;
+                selectedPosition = holder.getAdapterPosition();
                 notifyItemChanged(unselectedPosition);
                 notifyItemChanged(selectedPosition);
             });
@@ -232,8 +241,16 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public int getItemCount() {
-            Log.d("MainActivity", "item count: " + dataSource.size());
             return dataSource.size();
+        }
+
+        public void setSelectionId(int targetId) {
+            for (int i = 0; i < dataSource.size(); i++) {
+                if (dataSource.get(i).getId() == targetId) {
+                    selectedPosition = i;
+                    break;
+                }
+            }
         }
     }
 }
