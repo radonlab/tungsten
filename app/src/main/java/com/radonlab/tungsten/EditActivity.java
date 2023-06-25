@@ -10,12 +10,12 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 
 import com.amrdeveloper.codeview.CodeView;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
 import com.radonlab.tungsten.base.BaseActivity;
 import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptRepo;
@@ -122,7 +122,7 @@ public class EditActivity extends BaseActivity {
                 .setView(R.layout.dialog_edit)
                 .setPositiveButton(R.string.ok, null)
                 .show();
-        TextInputEditText editText = alertDialog.findViewById(R.id.edit_text);
+        EditText editText = alertDialog.findViewById(R.id.edit_text);
         editText.setHint(R.string.http_s);
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
                 .setOnClickListener(view -> {
@@ -175,7 +175,7 @@ public class EditActivity extends BaseActivity {
                     .setPositiveButton(R.string.ok, null)
                     .setNegativeButton(R.string.cancel, null)
                     .show();
-            TextInputEditText editText = alertDialog.findViewById(R.id.edit_text);
+            EditText editText = alertDialog.findViewById(R.id.edit_text);
             editText.setHint(R.string.file_name);
             alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
                     .setOnClickListener(view -> {

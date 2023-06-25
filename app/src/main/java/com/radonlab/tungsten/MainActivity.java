@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -25,7 +26,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.radonlab.tungsten.base.BaseActivity;
 import com.radonlab.tungsten.constant.AppConstant;
 import com.radonlab.tungsten.dao.ScriptRepo;
@@ -41,7 +41,7 @@ public class MainActivity extends BaseActivity {
 
     private RecyclerView listView;
 
-    private FloatingActionButton fab;
+    private ImageButton fab;
 
     private ListAdapter listAdapter;
 
