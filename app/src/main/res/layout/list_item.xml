@@ -7,10 +7,10 @@
     android:layout_marginVertical="@dimen/space_medium">
 
     <View
-        android:id="@+id/indicator"
         android:layout_width="@dimen/space_tiny"
         android:layout_height="match_parent"
-        android:background="@drawable/cl_indicator_background" />
+        android:background="@drawable/cl_indicator_background"
+        android:duplicateParentState="true" />
 
     <RelativeLayout
         android:layout_width="match_parent"

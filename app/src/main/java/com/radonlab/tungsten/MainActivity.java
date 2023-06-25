@@ -177,8 +177,6 @@ public class MainActivity extends BaseActivity {
 
     private static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public View indicator;
-
         public TextView scriptName;
 
         public TextView modifiedTime;
@@ -187,7 +185,6 @@ public class MainActivity extends BaseActivity {
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            indicator = itemView.findViewById(R.id.indicator);
             scriptName = itemView.findViewById(R.id.script_name);
             modifiedTime = itemView.findViewById(R.id.modified_time);
             editButton = itemView.findViewById(R.id.edit_button);
@@ -197,6 +194,8 @@ public class MainActivity extends BaseActivity {
     private class ListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         public final List<ScriptDTO> dataSource = new ArrayList<>();
+
+        public int selectedPosition = RecyclerView.NO_POSITION;
 
         @NonNull
         @Override
@@ -214,15 +213,20 @@ public class MainActivity extends BaseActivity {
                 timeLabel = DateFormat.format("yy/MM/dd HH:mm", dataItem.getTimestamp());
             }
             boolean selected = dataItem.getId() == selectedScriptId;
-            holder.indicator.setSelected(selected);
+            holder.itemView.setSelected(selected);
             holder.modifiedTime.setText(timeLabel);
             holder.editButton.setOnClickListener(view -> {
                 openScriptViewer(dataItem);
             });
             holder.itemView.setOnClickListener(view -> {
+                // Save selection
                 int scriptId = dataItem.getId();
                 preferences.edit().putInt(AppConstant.SCRIPT_ID, scriptId).apply();
-                initScreenService(scriptId);
+                // Repaint
+                int unselectedPosition = selectedPosition;
+                selectedPosition = position;
+                notifyItemChanged(unselectedPosition);
+                notifyItemChanged(selectedPosition);
             });
         }
 
